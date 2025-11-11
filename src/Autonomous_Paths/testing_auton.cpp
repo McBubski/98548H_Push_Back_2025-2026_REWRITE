@@ -1,5 +1,6 @@
 #include "Autonomous/autonomous_definitions.h"
 #include "Autonomous_Functions/auton_functions.h"
+#include "RAT/path_follower.h"
 
 #include "Autonomous_Paths/testing_auton.h"
 
@@ -14,5 +15,5 @@ Auton testingAuton = {
 
 
 void TestingAuton(void) {
-
+    turnToHeading(90, 100);
 }

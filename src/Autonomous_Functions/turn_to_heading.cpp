@@ -10,22 +10,21 @@ void turnToHeading(double heading, double turnSpeed) {
     double startError = error;
     double previousTime = Brain.Timer.system();
 
-    double timeout = 1000;
+    double timeout = 500 + (std::abs(startError) / 360.0) * 1000; // Base timeout plus extra time for larger turns
 
     bool notDone = true;
 
     double p = 1.0 * 0.5;
-    double i = 0;//0.0025;//0.005;
-    double d = 1.6;//2.82;//2.85;
+    double i = 0;
+    double d = 1.6;
+
+    double acceleration = 1.0;
 
     double error_margin = 1;
     double angular_velocity_margin = 3;
 
-    //int minMotorPower = 2;
+    PID turnPid = PID(p, i, d, acceleration, 5, turnSpeed, timeout, 100);//0.48, 0.0001, 2.75,
 
-    PID turnPid = PID(p, i, d, 1, 5, 100, timeout, 0);//0.48, 0.0001, 2.75,
-
-    //double minimumSpeed = 1.5;
 
     while (notDone) {
         // Update Error
@@ -40,25 +39,20 @@ void turnToHeading(double heading, double turnSpeed) {
 
         // Checks if error is small enough and robot is slow enough
         if (std::abs(error) <= error_margin && std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin && turnPid.RanOnce == true && turnPid.HasReachedEnd == false) {
+            notDone = false;
             turnPid.HasReachedEnd = true;
             turnPid.TimeReachedEnd = turnPid.Time;
         }
 
         if(turnPid.Time - turnPid.TimeReachedEnd > turnPid.SettleTime && turnPid.HasReachedEnd) {
             notDone = false;
-        }
-
-        if (std::abs(error) <= std::abs(startError) * 0.1) {
-            //turnPid.I = 0.01;
+            turnPid.TimeReachedEnd = turnPid.Time;
         }
 
         if (turnPid.Time > turnPid.Timeout) {
             notDone = false;
+            turnPid.TimeReachedEnd = turnPid.Time;
         }
-
-        //if (std::abs(speed) <= minimumSpeed) {
-        //    speed = minimumSpeed * GetSign(speed);
-        //}
 
         // Spin Wheels
 

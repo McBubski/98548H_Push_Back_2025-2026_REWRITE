@@ -60,7 +60,7 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
         previous_target_velocity = target_velocity;
 
         // Step Five - Calculate target wheel velocities
-        double track_width = 14.0;
+        double track_width = 12.5;
         double left_target_velocity = target_velocity * (2.0 + kappa * track_width) / 2.0;
         double right_target_velocity = target_velocity * (2.0 - kappa * track_width) / 2.0;
 

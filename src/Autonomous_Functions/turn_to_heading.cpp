@@ -4,26 +4,31 @@
 #include "vex.h"
 
 #include <cmath>
+#include <iostream>
 
 void turnToHeading(double heading, double turnSpeed) {
+    std::cout << "Started turning." << std::endl;
+
     double error = WrapAngle(heading - inertial_sensor.heading());
     double startError = error;
     double previousTime = Brain.Timer.system();
 
-    double timeout = 500 + (std::abs(startError) / 360.0) * 1000; // Base timeout plus extra time for larger turns
+    double timeout = 750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
+
+    std::cout << timeout << std::endl;
 
     bool notDone = true;
 
-    double p = 1.0 * 0.5;
-    double i = 0;
-    double d = 1.6;
+    double p = 0.38;
+    double i = 0.01;
+    double d = 0.6;
 
     double acceleration = 1.0;
 
     double error_margin = 1;
     double angular_velocity_margin = 3;
 
-    PID turnPid = PID(p, i, d, acceleration, 5, turnSpeed, timeout, 100);//0.48, 0.0001, 2.75,
+    PID turnPid = PID(p, 0, d, acceleration, 5, turnSpeed, timeout, 100);//0.48, 0.0001, 2.75,
 
 
     while (notDone) {
@@ -42,17 +47,29 @@ void turnToHeading(double heading, double turnSpeed) {
             notDone = false;
             turnPid.HasReachedEnd = true;
             turnPid.TimeReachedEnd = turnPid.Time;
+
+            std::cout << "Hit error and velocity target." << std::endl;
         }
 
         if(turnPid.Time - turnPid.TimeReachedEnd > turnPid.SettleTime && turnPid.HasReachedEnd) {
             notDone = false;
             turnPid.TimeReachedEnd = turnPid.Time;
+
+            std::cout << "Settled down." << std::endl;
         }
 
         if (turnPid.Time > turnPid.Timeout) {
             notDone = false;
             turnPid.TimeReachedEnd = turnPid.Time;
+
+            std::cout << "Timed out." << std::endl;
         }
+
+        if (std::abs(error) <= 25) {
+            turnPid.I = i;
+        }
+
+        //std::cout << error << std::endl;
 
         // Spin Wheels
 
@@ -65,6 +82,10 @@ void turnToHeading(double heading, double turnSpeed) {
 
         //std::cout << "Error: " << error << std::endl;
     }
+
+    //std::cout << "Ended turning." << std::endl;
+
+    //Controller.rumble("..");
 
     left_drive.stop(brake);
     right_drive.stop(brake);

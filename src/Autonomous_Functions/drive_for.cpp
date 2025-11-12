@@ -13,17 +13,18 @@ void driveFor(double distance, double speed) {
 
     int timeout = (std::abs(distance) / 12) * 750 + 500;
 
-    PID drivePID = PID(5.3, 0, 1.2, 0.1, 10, speed, timeout, 100);
-    
-    //double p = 1.15 * 0.5;
-    //double i = 0;
-    //double d = 2.6;
+    double turn_kp = 0.375;
+    double turn_ki = 0.01;
+    double turn_kd = 0.7;
 
-    double p = 1.0 * 0.5;
-    double i = 0;//0.0025;//0.005;
-    double d = 1.6;//2.82;//2.85;
+    double drive_kp = 2.75;
+    double drive_ki = 0.075;
+    double drive_kd = 5.0;
 
-    PID turnPID = PID(p, i, d, 100, 5, 100, 99999999, 0);//0.48, 0.0001, 2.75,
+    double acceleration = 0.1;
+
+    PID drivePID = PID(drive_kp, 0, drive_kd, acceleration, 10, speed, timeout, 100);
+    PID turnPID = PID(turn_kp, turn_ki, turn_kd, 100, 5, 100, 99999999, 0);//0.48, 0.0001, 2.75,
 
     double driveError = distance;
     double turnError = WrapAngle(targetHeading - inertial_sensor.heading());
@@ -35,7 +36,7 @@ void driveFor(double distance, double speed) {
 
     while (driving) {
         double encoderChange = forward_tracking_wheel.position(turns) - encoderStart;
-        double inchesMoved = encoderChange * 2 * M_PI; // Circumference of Wheels
+        double inchesMoved = encoderChange * 2.75 * M_PI; // Circumference of Wheels
 
         driveError = distance - inchesMoved;
         turnError = WrapAngle(targetHeading - inertial_sensor.heading());
@@ -56,9 +57,9 @@ void driveFor(double distance, double speed) {
             driving = false;
         }
 
-        //if (std::abs(driveOutput) <= 5) {
-        //    driveOutput = 5 * GetSign(speed);
-        //}
+        if (std::abs(driveError) <= 4) {
+            drivePID.I = drive_ki;
+        }
 
         left_drive.spin(forward, (driveOutput + turnOutput), percent);
         right_drive.spin(forward, (driveOutput - turnOutput), percent);

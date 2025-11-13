@@ -74,3 +74,8 @@ void driveFor(double distance, double speed) {
     left_drive.stop(brake);
     right_drive.stop(brake);
 }
+
+void setDrivetrainSpeed(double speed) {
+    left_drive.spin(forward, speed, percent);
+    right_drive.spin(forward, speed, percent);
+}

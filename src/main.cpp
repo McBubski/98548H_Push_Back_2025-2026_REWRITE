@@ -3,6 +3,7 @@
 #include "Autonomous/autonomous.h"
 #include "DriverControl/driver_control.h"
 #include "GUI/GUI-main.h"
+#include "Robot/color_sorting.h"
 
 using namespace vex;
 
@@ -31,8 +32,11 @@ void pre_auton(void) {
   // Tasks
 
   task GUI_Task = task(DisplayGUI);
+  //task Color_Sort_task = task(ColorSortTask);
 
   // Calibration
+
+  color_sensor.setLightPower(100, percent);
 
   forward_tracking_wheel.resetPosition();
   sideways_tracking_wheel.resetPosition();

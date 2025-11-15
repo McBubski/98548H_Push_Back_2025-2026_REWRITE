@@ -24,6 +24,7 @@ void drivercontrol(void) {
     // No need for odometry during driver, so we raise the wheel to protect it
 
     tracking_wheel_piston.set(true);
+    wing.set(true);
 
     while (1) {
         // Maps motor speed to stick position %

@@ -9,11 +9,13 @@ void TestingAuton(void);
 Auton testingAuton = {
     "Testing Auton",
     "Testing stuff for Trey fr",
-    -36, -36, 0,
+    36, 36, 0,
     TestingAuton
 };
 
 
 void TestingAuton(void) {
+    hood.set(true);
 	intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
 }

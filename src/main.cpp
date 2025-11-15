@@ -32,7 +32,7 @@ void pre_auton(void) {
   // Tasks
 
   task GUI_Task = task(DisplayGUI);
-  //task Color_Sort_task = task(ColorSortTask);
+  task Color_Sort_task = task(ColorSortTask);
 
   // Calibration
 

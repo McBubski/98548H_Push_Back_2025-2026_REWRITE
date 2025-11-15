@@ -1,5 +1,9 @@
 #include "GUI/odometry-window.h"
 #include "GUI_Utility/field_image_buffer.h"
+#include "Autonomous/autonomous_definitions.h"
+#include "Robot/color_sorting.h"
+
+#include <iostream>
 
 float robotSize = 10;
 Path* Display_Path = nullptr;
@@ -7,13 +11,27 @@ Path* Display_Path = nullptr;
 // Displays odometry map, robot, and coordinates on brain screen
 
 void DrawOdometryWindow() {
+    // Flips values depending on color
+    int colorSide = 1;
+    double fixedHeading = inertial_sensor.heading();
+
+    if (colorSortMode == RED) {
+        colorSide = -1;
+        fixedHeading = fmod(inertial_sensor.heading() + 180, 360);
+    } else {
+        fixedHeading = inertial_sensor.heading();
+    }
+
+    double y_offset_from_starting = (autons[auton_path]->startY - position_tracking.GlobalYPos);
+    double adjusted_y = autons[auton_path]->startY - (y_offset_from_starting * colorSide);
+
     // Heading and Coordinates
 
     Brain.Screen.setFillColor(black);
     Brain.Screen.setFont(vex::fontType::mono15);
-    Brain.Screen.printAt(390, 230, "%.1f°", inertial_sensor.heading(degrees));
+    Brain.Screen.printAt(390, 230, "%.1f°", fixedHeading);
 
-    Brain.Screen.printAt(240, 230, "(%.2f, %.2f)", position_tracking.GlobalXPos, position_tracking.GlobalYPos);
+    Brain.Screen.printAt(240, 230, "(%.2f, %.2f)", position_tracking.GlobalXPos * colorSide, position_tracking.GlobalYPos * colorSide);
 
     // Field and Robot
 
@@ -27,13 +45,27 @@ void DrawOdometryWindow() {
 // Displays visualization of robot
 
 void DrawRobotGraphic(void) {
+    // Flips values depending on color
+    int colorSide = 1;
+    double fixedHeading = inertial_sensor.heading();
+
+    if (colorSortMode == RED) {
+        colorSide = -1;
+        fixedHeading = fmod(inertial_sensor.heading() + 180, 360);
+    } else {
+        fixedHeading = inertial_sensor.heading();
+    }
+
+    double y_offset_from_starting = (autons[auton_path]->startY - position_tracking.GlobalYPos);
+    double adjusted_y = autons[auton_path]->startY - (y_offset_from_starting * colorSide);
+
     // Calculates where robot should be drawn
     float pixelsPerInch = (200.0 / 144.0);
-    float XOnBrainScreen = 337 + (pixelsPerInch * position_tracking.GlobalXPos);
-    float YOnbrainScreen = 110 + (-pixelsPerInch * position_tracking.GlobalYPos);
+    float XOnBrainScreen = 337 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
+    float YOnbrainScreen = 110 + (-pixelsPerInch * position_tracking.GlobalYPos * colorSide);
 
     // Calculates line offsets for drawing border
-    float headingInRadians = (floor(inertial_sensor.angle(degrees)) * M_PI / 180.0);
+    float headingInRadians = (fixedHeading * M_PI / 180.0);
 
     float lineOffset1 = sqrt(2) * robotSize * cos(-headingInRadians + M_PI_4);
     float lineOffset2 = sqrt(2) * robotSize * cos(-headingInRadians - M_PI_4);

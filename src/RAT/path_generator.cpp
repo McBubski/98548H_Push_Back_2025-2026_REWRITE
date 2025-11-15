@@ -57,35 +57,33 @@ Path PathGenerator::GeneratePath(
 }
 
 // Injects points into a path, given a desired spacing.
-
 Path PathGenerator::InterpolatePath(const Path& inputPath, double spacing) {
+    // Initialize new path
     Path interpolatedPath;
 
     // Can't inject without at least two points
-
     if (inputPath.size() < 2) {
         return inputPath;
     }
 
-    // Runs through each segment and calculates how many points fit
-
+    // Runs through each segment and calculates how many waypoints fit
     for (size_t i = 0; i < inputPath.size() - 1; i++) {
         const auto& startPoint = inputPath.waypoints[i];
         const auto& endPoint = inputPath.waypoints[i + 1];
 
-        // Calculate direction
+        // Calculates the length of the path segment
         double dx = endPoint.x - startPoint.x;
         double dy = endPoint.y - startPoint.y;
         double distance = std::sqrt(dx * dx + dy * dy);
 
-        // Determine how many points to interject
+        // Determine how many waypoints to interject (length / spacing)
         int pointsThatFit = static_cast<int>(std::ceil(distance / spacing));
 
-        // Normalize direction
-
+        // Calculate normalized direction to add points
         double dirX = dx / distance;
         double dirY = dy / distance;
 
+        // Inject # of waypoints that fit, spaced at the correct spacing
         for (int j = 0; j < pointsThatFit; j++) {
             double newX = startPoint.x + dirX * spacing * j;
             double newY = startPoint.y + dirY * spacing * j;
@@ -95,6 +93,7 @@ Path PathGenerator::InterpolatePath(const Path& inputPath, double spacing) {
 
     }
 
+    // Return new path
     return interpolatedPath; 
 };
 
@@ -104,7 +103,7 @@ Path PathGenerator::SmoothPath(const Path& inputPath, double a, double b, double
     Path clonedPath = inputPath;
     double change = tolerance;
 
-    // Some big elaborate mathy stuff I don't understand.
+    // Repeatedly iterate on the path until the points converge on a desired curvature within a certain tolerance
 
     while (change >= tolerance) {
         change = 0.0;

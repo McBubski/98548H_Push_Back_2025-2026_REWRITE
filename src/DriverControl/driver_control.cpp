@@ -1,6 +1,18 @@
 #include "DriverControl/driver_control.h"
 #include "DriverControl/driver_control_functions.h"
+#include "Robot/color_sorting.h"
 #include "vex.h"
+
+#include <iostream>
+
+// The goal here is to stop the indexer if it's stalling on a ball
+bool hasTorqueStalled = false;
+
+// This tracks if the indexer stall timer is running (to make sure we've been stalled for long enough, and it's not one time thing)
+bool stall_timer_running = false;
+
+// This is the start time of the internal timer to check how long it's been since stall started
+int stall_timer_start = 0;
 
 void drivercontrol(void) {
     // Connect buttons to pneumatics
@@ -9,10 +21,12 @@ void drivercontrol(void) {
     Controller.ButtonY.pressed(toggleHood);
     Controller.ButtonRight.pressed(toggleWing);
 
+    // No need for odometry during driver, so we raise the wheel to protect it
+
     tracking_wheel_piston.set(true);
 
     while (1) {
-        // Drive
+        // Maps motor speed to stick position %
 
         float leftStickPosition = Controller.Axis3.position();
         float rightStickPosition = Controller.Axis2.position();
@@ -20,28 +34,83 @@ void drivercontrol(void) {
         left_drive.spin(forward, leftStickPosition, percent);
         right_drive.spin(forward, rightStickPosition, percent);
 
-        // Intake
+        // Indexer
 
-        if (Controller.ButtonR1.pressing()) {
+        if (Controller.ButtonL1.pressing()) {       // To score long goal
             intake.spin(forward, 100, percent);
-        } else if (Controller.ButtonR2.pressing()) {
-            intake.spin(reverse, 100, percent);
+
+            // If the current maxes out, the motor is stalled
+            if (indexer.current(percent) == 100.0) {
+                // If the stall timer isn't already running, start it and update the timer start
+                if (stall_timer_running == false) {
+                    stall_timer_running = true;
+                    stall_timer_start = Brain.Timer.system();
+                }
+            } else {
+                // If the current is less than max, but still really high, don't reset the timer
+                // If the current is really low though, we've stopped stalling
+                if (indexer.current(percent) < 95.0) {
+                    stall_timer_running = false;
+                    stall_timer_start = Brain.Timer.system();
+                }
+            }
+
+            // If the time since we started stalling is more than a second, set hasTorqueStalled to true
+            if ((Brain.Timer.system() - stall_timer_start) >= 1000.0) {
+                hasTorqueStalled = true;
+            }
+
+            // If we haven't stalled, spin the indexer. If we have, stop it.
+            if (hasTorqueStalled == false) {
+                if (!colorSortingIndexerOverride) {
+                    indexer.spin(forward, 100, percent);
+                }
+            } else {
+                std::cout << "Stall!" << std::endl;
+                if (!colorSortingIndexerOverride) {
+                    indexer.stop(coast);
+                }
+            }
+        } else if (Controller.ButtonL2.pressing()) {    // To score middle high goal
+            // Resets torque stall variables
+
+            hasTorqueStalled = false;
+            stall_timer_running = false;
+            stall_timer_start = Brain.Timer.system();
+
+            if (!colorSortingIndexerOverride) {
+                indexer.spin(reverse, 100, percent);
+            }
+            intake.spin(forward, 100, percent);
         } else {
-            if (!Controller.ButtonL1.pressing() || !Controller.ButtonR2.pressing()) {
-                intake.stop(coast);
+            // Resets torque stall variables
+
+            hasTorqueStalled = false;
+            stall_timer_running = false;
+            stall_timer_start = Brain.Timer.system();
+
+            if (!colorSortingIndexerOverride) {
+                indexer.stop(coast);
             }
         }
 
-        // Indexer
+        // Intake
 
-        if (Controller.ButtonL1.pressing()) {
-            indexer.spin(forward, 100, percent);
+        if (Controller.ButtonR1.pressing()) {   // Normal intaking
             intake.spin(forward, 100, percent);
-        } else if (Controller.ButtonL2.pressing()) {
-            indexer.spin(reverse, 100, percent);
-            intake.spin(forward, 100, percent);
+            if (!colorSortingIndexerOverride) {
+                indexer.spin(forward, 100, percent);
+            }
+        } else if (Controller.ButtonR2.pressing()) {    // Outaking
+            intake.spin(reverse, 100, percent);
+            if (!colorSortingIndexerOverride) {
+                indexer.spin(reverse, 100, percent);
+            }
         } else {
-            indexer.stop(coast);
+            // Don't stop intake if the indexer is doing stuff
+            if (!(Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing())) {
+                intake.stop(coast);
+            }
         }
 
         wait(20, msec);

@@ -8,7 +8,7 @@ void Skills(void);
 Auton skillsAuton = {
     "Skills",
     "Epic Skills Oh Yeah",
-    -48.0, -16.0, 180.0,
+    48.0, 16.0, 0.0,
     Skills
 };
 

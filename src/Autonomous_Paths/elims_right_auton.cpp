@@ -8,7 +8,7 @@ void ElimsRightAuton(void);
 Auton elimsRightAuton = {
     "Elim Right",
     "Eat that trash teams",
-    -65, -18, 94.5,
+    65, 18, 94.5 + 180,
     ElimsRightAuton
 };
 

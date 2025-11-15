@@ -5,10 +5,12 @@
 #include "GUI/robot-window.h"
 #include "GUI/auton-window.h"
 
+#include "Autonomous/autonomous_definitions.h"
+#include "Robot/color_sorting.h"
+
 #include "vex.h"
 #include <string.h>
-
-#include "Autonomous/autonomous_definitions.h"
+#include <iostream>
 
 // Button debounce and window state
 bool screenDebounce = false;
@@ -48,8 +50,14 @@ int displaySelector(void) {
         // Display Auton Color
 
         Brain.Screen.printAt(100 - (nameLength / 2), 65, name);
-        Brain.Screen.setPenColor(blue);
+        
         Brain.Screen.setPenWidth(4);
+        if (colorSortMode == RED) {
+            Brain.Screen.setPenColor(red);
+        } else if (colorSortMode == BLUE) {
+            Brain.Screen.setPenColor(blue);
+        }
+
         Brain.Screen.drawLine(100 - (nameLength / 2), 70, 100 - (nameLength / 2) + nameLength, 70);
         Brain.Screen.drawLine(100 - (nameLength / 2), 40, 100 - (nameLength / 2) + nameLength, 40);
 
@@ -106,7 +114,25 @@ void checkButtonPresses(void) {
             RobotWindowButton.checkPress(x, y);
             AutonWindowButton.checkPress(x, y);
 
-            
+            // Check toggling color
+
+            if (x >= 45 && x <= 175) {
+                if (y >= 40 && y <= 65) {
+                    switch (colorSortMode) {
+                        case RED:
+                            colorSortMode = BLUE;
+                            break;
+                        case BLUE:
+                            colorSortMode = RED;
+                            break;
+                        default:
+                            colorSortMode = RED;
+                            break;
+                    }
+
+                    position_tracking.SetPositionToCurrentAuton();
+                }
+            }
         }
     } else {
         screenDebounce = false;

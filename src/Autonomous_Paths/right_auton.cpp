@@ -19,12 +19,13 @@ void RightAuton(void) {
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.00, 17.5},
     	 {40.0, 33.5},
-    	 {48.00, 55},
-    	 {72.0, 39.5}
+    	 {48.00, 54.5},
+    	 {72.0, 39.0}
     	},
     	50.0,
     	25.0,
@@ -38,7 +39,10 @@ void RightAuton(void) {
 
     wait(900, msec);
 
-    driveFor(-28, 100);
+    driveFor(-6, 50);
+    pointAt(24, 47, 100, reverse);
+    driveFor(-24, 49);
+
 
     // Drives into long goal
 
@@ -48,9 +52,9 @@ void RightAuton(void) {
 
     wait(400, msec);
 
-    driveFor(1, 100);
+    driveFor(0.5, 100);
 
-    wait(600, msec);
+    wait(800, msec);
 
     driveFor(6, 100);
     hood.set(false);
@@ -68,7 +72,7 @@ void RightAuton(void) {
     	{{32.0, 44},
     	 {50.0, 44.0},
     	 {32.0, 24.0},
-    	 {10.0, 6.0}
+    	 {8.0, 7.0}
     	},
     	35.0,
     	25.0,

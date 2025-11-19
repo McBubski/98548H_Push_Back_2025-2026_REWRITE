@@ -1,6 +1,7 @@
 #include "RAT/path_generator.h"
 
 #include <cmath>
+#include <iostream>
 
 // Function to generate a path
 
@@ -191,6 +192,8 @@ Path PathGenerator::ComputeCurvatureAlongPath(const Path& inputPath) {
 
 Path PathGenerator::ComputeTargetVelocityAlongPath(const Path& inputPath, double curveSlowdown, double maxVelocity, double maxAcceleration) {
     Path newPath = inputPath;
+
+    std::cout << maxAcceleration << std::endl;
 
     for (size_t i = 0; i < inputPath.size(); i++) {
         newPath.waypoints[i].targetVelocity = std::min(maxVelocity, curveSlowdown / inputPath.waypoints[i].curvature);

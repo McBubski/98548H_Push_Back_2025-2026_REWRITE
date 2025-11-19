@@ -18,12 +18,13 @@ void LeftAuton(void) {
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.00, -17.5},
-    	 {40.0, -33.5},
-    	 {48.00, -55.5},
-    	 {72.0, -45}
+    	 {40.0, -36.5},
+    	 {48.00, -59},
+    	 {72.0, -41}
     	},
     	50.0,
     	25.0,
@@ -38,6 +39,8 @@ void LeftAuton(void) {
     wait(900, msec);
 
     driveFor(-28, 100);
+    //driveFor(-6, 100);
+    //driveTo(28, -50, 100, reverse);
 
     // Drives into long goal
 
@@ -81,7 +84,8 @@ void LeftAuton(void) {
     FollowPath(middle_balls_path, forward, 16.0);
 
     //pointAt(6, -6, 100, reverse);
-    driveTo(12, -14, 40, reverse);
+    driveTo(15.5, -15.5, 40, reverse);
+    indexer.spin(reverse, 100, percent);
 }
 
 /*
@@ -122,6 +126,7 @@ void LeftAuton(void) {
 
     wing.set(false);
    
+
     intake.stop();
     intake.spin(forward, 80, percent);
     //FollowPath(middle_goal_path, forward, 36.0);

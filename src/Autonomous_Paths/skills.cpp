@@ -3,6 +3,7 @@
 #include "RAT/path_follower.h"
 
 #include "Autonomous_Paths/skills.h"
+#include <iostream>
 
 void Skills(void);
 
@@ -13,177 +14,238 @@ Auton skillsAuton = {
     Skills
 };
 
+int CheckMotorStallTask(void) {
+    std::cout << "Stall task started" << std::endl;
+    // The goal here is to stop the indexer if it's stalling on a ball
+    bool hasTorqueStalled = false;
+
+    // This tracks if the indexer stall timer is running (to make sure we've been stalled for long enough, and it's not one time thing)
+    bool stall_timer_running = false;
+
+    // This is the start time of the internal timer to check how long it's been since stall started
+    int stall_timer_start = 0;
+
+    while (hasTorqueStalled == false) {
+        if (indexer.current(percent) == 100.0) {
+            // If the stall timer isn't already running, start it and update the timer start
+            if (stall_timer_running == false) {
+                stall_timer_running = true;
+                stall_timer_start = Brain.Timer.system();
+            }
+        } else {
+            // If the current is less than max, but still really high, don't reset the timer
+            // If the current is really low though, we've stopped stalling
+            if (indexer.current(percent) < 95.0) {
+                stall_timer_running = false;
+                stall_timer_start = Brain.Timer.system();
+            }
+        }
+    
+        // If the time since we started stalling is more than a second, set hasTorqueStalled to true
+        if ((Brain.Timer.system() - stall_timer_start) >= 1000.0) {
+            hasTorqueStalled = true;
+        }
+    }
+
+    std::cout << "Stall!" << std::endl;
+    indexer.stop(coast);
+
+    return 1;
+}
+
 
 void Skills(void) {
-    // Drive into matchloader
+    // Curve to the first matchloader
+
+    Path first_matchloader_path = PathGenerator::GeneratePath(
+    	{{62, 15.0},
+         {50.0, 15.0},
+    	 {50.0, 46.0},
+         {58, 46}
+    	 //{44.0, 45.0},
+    	 //{73.5, 43.0}
+    	},
+    	40.0,
+    	25.0,
+    	6.0,
+    	0.45,
+    	1.5
+    );
+
+    // Spin the intake to score out of matchloader
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
+    task indexerTask = task(CheckMotorStallTask);
+    FollowPath(first_matchloader_path, forward, 12.0);
+    driveTo(63.5, 45, 60, forward);
 
-    Path matchload_path = PathGenerator::GeneratePath(
-    	{{48.00, 17.5},
-    	 {40.0, 33.5},
-    	 {48.00, 53.5},
-    	 {72.0, 39.0}
+    // Keep pressure on matchloader to grab all balls
+
+    setDrivetrainSpeed(6);
+    wait(350, msec);
+    setDrivetrainSpeed(0.5);
+    wait(1400, msec);
+    //driveFor(-6, 100);
+
+    // Drives to other side of matchloader
+
+    Path first_long_goal_path = PathGenerator::GeneratePath(
+    	{{57.5, 48.0},
+    	 {50.0, 48.0},
+    	 {38.5, 56.0},
+    	 {-26, 60},
+         {-38, 38}
     	},
-    	50.0,
+    	45.0,
     	25.0,
     	6.0,
-    	0.8,
+    	0.35,
     	2.5
     );
 
-    FollowPath(matchload_path, forward, 16.0);
-    setDrivetrainSpeed(1);
-
-    wait(900, msec);
-    intake.stop();
-    wait(200, msec);
-    intake.spin(forward, 100, percent);
-    wait(600, msec);
-    setDrivetrainSpeed(0);
-    intake.stop();
-    wait(200, msec);
-    intake.spin(forward, 100, percent);
-    wait(600, msec);
+    first_long_goal_path.waypoints[4].onReach = []() {
+        matchloader.set(false);
+    };
     
-    driveFor(-8, 100);
-    wait(1000, msec);
-    driveFor(10, 100);
-    wait(1200, msec);
-    
-    // Drive into first long goal
+    wing.set(true);
+    FollowPath(first_long_goal_path, reverse, 20.0);
 
-    driveFor(-6, 50);
-    pointAt(24, 47, 100, reverse);
-    driveFor(-24, 49);
+    /*Path curve_into_long_goal = PathGenerator::GeneratePath(
+    	{{-26.5, 56.0},
+    	 {-34.5, 56.0},
+    	 {-38.0, 54.0},
+    	 {-36.5, 47.0},
+    	 {-18.0, 46.0}
+    	},
+    	25.0,
+    	25.0,
+    	4.0,
+    	0.5,
+    	8.0
+    );*/
 
-    // Score in first long goal
+    //FollowPath(curve_into_long_goal, reverse, 10.0);
 
-    indexer.spin(forward, 100, percent);
-    intake.spin(forward, 100, percent);
-    setDrivetrainSpeed(-100);
-    hood.set(true);
-    driveFor(1, 100);
+    // Drive into matchloader
 
-    driveFor(-2, 100);
+    driveTo(-24, 47.5, 100, reverse);
 
-    driveFor(1, 100);
-
-    wait(600, msec);
+    setDrivetrainSpeed(-40);
     intake.spin(reverse, 100, percent);
-    wait(200, msec);
-    intake.spin(forward, 100, percent);
+    wait(250, msec);
 
-    // First ram
+    // Get rid of our current blocks
 
-    driveFor(4, 100);
-    hood.set(false);
-    setDrivetrainSpeed(-70);
-
-    wait(600, msec);
-
-    // Drive to second matchloader
-
-    Path second_matchload_path = PathGenerator::GeneratePath(
-	    {{32.0, 48.00},
-	     {44, 36.0},
-	     {40, -32},
-	     {40, -48.0},
-         {54.0, -54.0},
-    	 //{66.0, -39.0}
-	    },
-	    50.0,
-	    30.0,
-	    6.0,
-	    0.7,
-	    2.0
-    );
-
-    FollowPath(second_matchload_path, forward, 24.0);
-    driveTo(62, -49, 100, forward);
-
-    setDrivetrainSpeed(1);
-
-    wait(900, msec);
-    intake.stop();
-    wait(200, msec);
-    intake.spin(forward, 100, percent);
-    wait(600, msec);
-    setDrivetrainSpeed(0);
-    intake.stop();
-    wait(200, msec);
-    intake.spin(forward, 100, percent);
-    wait(600, msec);
-
-    driveFor(-8, 100);
-    wait(1000, msec);
-    driveFor(10, 100);
-    wait(1200, msec);
-    
-    
-    //driveFor(-4, 100);
-    //setDrivetrainSpeed(20);
-    
-    // Drive into second long goal
-
-    driveFor(-6, 50);
-    pointAt(24, -49, 100, reverse);
-    driveFor(-24, 50);
-
-    // Score in second long goal
-
-    indexer.spin(forward, 100, percent);
-    intake.spin(forward, 100, percent);
-    setDrivetrainSpeed(-100);
     hood.set(true);
-    driveFor(1, 100);
-
-    driveFor(-2, 100);
-
-    driveFor(1, 100);
-
+    intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
+    wait(800, msec);
+    intake.spin(reverse, 100, percent);
+    wait(150, msec);
+    intake.spin(forward, 100, percent);
     wait(1200, msec);
 
-    // First ram
-
-    driveFor(4, 100);
-    hood.set(false);
-    setDrivetrainSpeed(-100);
-
-    wait(600, msec);
-    indexer.stop();
-    hood.set(false);
-    matchloader.set(false);
-
-    // Park?
-
-    indexer.spin(reverse, 100, percent);
-
-    Path park_path = PathGenerator::GeneratePath(
-	    {{30.0, -48.0},
-	     {48.0, -48.0},
-	     {60, -42},
-	     {71, -30}, // SIX SEVEN AHHAHAAHAH
-	     {72, -9},
-	    },
-	    40.0,
-	    25.0,
-	    6.0,
-	    0.8,
-	    2.0
-    );
-
-    FollowPath(park_path, forward, 16.0);
-    driveFor(-1, 100);
-    turnToHeading(5, 100);
+    // Drive into farside matchloader
 
     matchloader.set(true);
+    driveFor(6, 100);
+    hood.set(false);
+    driveTo(-51.5, 46.5, 50, forward);
 
-    wait(500, msec);
+    wait(800, msec);
+    setDrivetrainSpeed(10);
+    wait(100, msec);
 
+    driveTo(-24, 45, 100, reverse);
+
+    // Score in long goal again
+
+    setDrivetrainSpeed(-40);
     intake.spin(reverse, 100, percent);
-    driveFor(22, 30);
-    matchloader.set(false);
+    wait(250, msec);
+
+    // Jam fix attempt
+
+    hood.set(true);
+    intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
+    wait(800, msec);
+    intake.spin(reverse, 100, percent);
+    wait(150, msec);
+    intake.spin(forward, 100, percent);
+    wait(1200, msec);
+
+    // Perhaps get control?
+
+    driveFor(4, 100);
+    hood.set(false);
+    driveFor(-8, 50);
+
+    // Drive to other long goal/matchloader
+
+    Path third_matchloader_path = PathGenerator::GeneratePath(
+    	{{-36.0, 48.0},
+    	 {-34.0, 36.0},
+    	 {-26.0, 24.0},
+    	 {-26.0, 0.0},
+    	 {-36.0, -52.5},
+    	},
+    	40.0,
+    	25.0,
+    	6.0,
+    	0.35,
+    	1.5
+    );
+
+    FollowPath(third_matchloader_path, forward, 18.0);
+    driveTo(-48.5, -46.5, 50, forward);
+
+    setDrivetrainSpeed(10);
+    wait(100, msec);
+    setDrivetrainSpeed(0);
+    wait(1200, msec);
+
+    // Drive back to the close side
+
+    Path return_to_our_side_matchloader_path = PathGenerator::GeneratePath(
+    	{{-57.5, -48.0},
+    	 {-50.0, -48.0},
+    	 {-38.5, -56.0},
+    	 {50, -60},
+         {56, -36}
+    	},
+    	45.0,
+    	25.0,
+    	6.0,
+    	0.35,
+    	2.5
+    );
+
+    return_to_our_side_matchloader_path.waypoints[4].onReach = []() {
+        matchloader.set(false);
+    };
+    
+    wing.set(true);
+    FollowPath(return_to_our_side_matchloader_path, reverse, 20.0);
+
+    driveTo(24, -46, 20, reverse);
+
+    // Score in long goal again
+
+    setDrivetrainSpeed(-40);
+    intake.spin(reverse, 100, percent);
+    wait(250, msec);
+
+    // Jam fix attempt
+
+    hood.set(true);
+    intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
+    wait(800, msec);
+    intake.spin(reverse, 100, percent);
+    wait(150, msec);
+    intake.spin(forward, 100, percent);
+    wait(1200, msec);
 }

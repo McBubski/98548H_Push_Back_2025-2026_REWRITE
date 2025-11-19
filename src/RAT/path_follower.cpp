@@ -2,6 +2,7 @@
 
 #include "Robot/utility_functions.h"
 #include <cmath>
+#include <iostream>
 
 // Follows a path, with a lookahead distance
 
@@ -14,7 +15,8 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
     int lastLookaheadIndex = 0;
     int lastTriggeredIndex = 0;
 
-    double maxRate = path.maxAcceleration; // Motor percent/second
+    std::cout << path.maxAcceleration << std::endl;
+    double maxRate = 25; // Motor percent/second
     double previousTime = Brain.Timer.system();
 
     double previous_left_target_velocity = path.waypoints[0].targetVelocity;
@@ -60,7 +62,7 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
         previous_target_velocity = target_velocity;
 
         // Step Five - Calculate target wheel velocities
-        double track_width = 12.5;
+        double track_width = 11.0;
         double left_target_velocity = target_velocity * (2.0 + kappa * track_width) / 2.0;
         double right_target_velocity = target_velocity * (2.0 - kappa * track_width) / 2.0;
 
@@ -244,3 +246,4 @@ Waypoint InterpolateSegment(const Waypoint& start, const Waypoint& end, double t
         start.y + t * (end.y - start.y)
     );
 }
+

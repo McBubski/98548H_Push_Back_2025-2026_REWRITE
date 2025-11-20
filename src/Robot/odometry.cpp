@@ -117,6 +117,12 @@ void Odometry::SetPosition(double new_x, double new_y, double new_heading) {
 
     GlobalXPos = new_x;
     GlobalYPos = new_y;
+
+    forwardPos = forward_tracking_wheel.position(degrees);
+    sidewaysPos = sideways_tracking_wheel.position(degrees);
+
+    previousForwardPos = forward_tracking_wheel.position(degrees);
+    previousSidewaysPos = sideways_tracking_wheel.position(degrees);
 }
 
 void Odometry::SetPositionToCurrentAuton() {

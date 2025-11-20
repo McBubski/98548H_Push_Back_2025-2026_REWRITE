@@ -44,7 +44,7 @@ inertial inertial_sensor = inertial(PORT10);
 rotation forward_tracking_wheel = rotation(PORT16, true);
 rotation sideways_tracking_wheel = rotation(PORT15, false);
 
-Odometry position_tracking = Odometry(2.75 / 2.0, 0.25, 1.25);
+Odometry position_tracking = Odometry(2.75 / 2.0, 0.125, 1.0625);
 
 // Sensors
 

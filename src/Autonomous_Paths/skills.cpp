@@ -10,7 +10,7 @@ void Skills(void);
 Auton skillsAuton = {
     "Skills",
     "Epic Skills Oh Yeah",
-    63.25, 15.0, 270.0,
+    61.25, 15.25, 270.0,
     Skills
 };
 
@@ -59,9 +59,9 @@ void Skills(void) {
 
     Path first_matchloader_path = PathGenerator::GeneratePath(
     	{{62, 15.0},
-         {50.0, 15.0},
-    	 {50.0, 46.0},
-         {58, 46}
+         {46.0, 15.0},
+    	 {46.0, 47.0},
+         {62.5, 47.0}
     	 //{44.0, 45.0},
     	 //{73.5, 43.0}
     	},
@@ -79,7 +79,7 @@ void Skills(void) {
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
     FollowPath(first_matchloader_path, forward, 12.0);
-    driveTo(63.5, 45, 60, forward);
+    driveTo(60.75, 45.5, 60, forward);
 
     // Keep pressure on matchloader to grab all balls
 
@@ -93,10 +93,10 @@ void Skills(void) {
 
     Path first_long_goal_path = PathGenerator::GeneratePath(
     	{{57.5, 48.0},
-    	 {50.0, 48.0},
-    	 {38.5, 56.0},
-    	 {-26, 60},
-         {-38, 38}
+    	 {50.0, 54.0},
+    	 {38.5, 58.0},
+    	 {-26, 60.0},
+         {-44, 38.5}
     	},
     	45.0,
     	25.0,
@@ -112,27 +112,10 @@ void Skills(void) {
     wing.set(true);
     FollowPath(first_long_goal_path, reverse, 20.0);
 
-    /*Path curve_into_long_goal = PathGenerator::GeneratePath(
-    	{{-26.5, 56.0},
-    	 {-34.5, 56.0},
-    	 {-38.0, 54.0},
-    	 {-36.5, 47.0},
-    	 {-18.0, 46.0}
-    	},
-    	25.0,
-    	25.0,
-    	4.0,
-    	0.5,
-    	8.0
-    );*/
+    //pointAt(-23, 47.5, 100, reverse);
+    driveTo(-23, 49.5, 70, reverse);
 
-    //FollowPath(curve_into_long_goal, reverse, 10.0);
-
-    // Drive into matchloader
-
-    driveTo(-24, 47.5, 100, reverse);
-
-    setDrivetrainSpeed(-40);
+    setDrivetrainSpeed(-30);
     intake.spin(reverse, 100, percent);
     wait(250, msec);
 
@@ -142,23 +125,25 @@ void Skills(void) {
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     wait(800, msec);
+    // Reset position rq
+    std::cout << "Reset Position" << std::endl;
+    position_tracking.SetPosition(-30.5, 48.0, inertial_sensor.heading(degrees));
     intake.spin(reverse, 100, percent);
     wait(150, msec);
     intake.spin(forward, 100, percent);
-    wait(1200, msec);
+    wait(1600, msec);
 
     // Drive into farside matchloader
 
     matchloader.set(true);
-    driveFor(6, 100);
+    driveTo(-58.5, 48.0, 50, forward);
     hood.set(false);
-    driveTo(-51.5, 46.5, 50, forward);
 
     wait(800, msec);
     setDrivetrainSpeed(10);
     wait(100, msec);
 
-    driveTo(-24, 45, 100, reverse);
+    driveTo(-28, 47.5, 100, reverse);
 
     // Score in long goal again
 
@@ -183,44 +168,50 @@ void Skills(void) {
     hood.set(false);
     driveFor(-8, 50);
 
+    position_tracking.SetPosition(-30.5, 48.0, inertial_sensor.heading(degrees));
+
+    indexer.spin(forward, 100, percent);
+    task tensionTask = task(CheckMotorStallTask);
+
     // Drive to other long goal/matchloader
 
     Path third_matchloader_path = PathGenerator::GeneratePath(
-    	{{-36.0, 48.0},
-    	 {-34.0, 36.0},
-    	 {-26.0, 24.0},
-    	 {-26.0, 0.0},
-    	 {-36.0, -52.5},
+    	{{-40.0, 48.0},
+    	 {-40.0, 36.0},
+    	 {-34.0, 24.0},
+    	 {-34.0, 0.0},
+    	 {-44.0, -59},
     	},
-    	40.0,
+    	50.0,
     	25.0,
-    	6.0,
+    	4.0,
     	0.35,
-    	1.5
+    	1.75
     );
 
     FollowPath(third_matchloader_path, forward, 18.0);
-    driveTo(-48.5, -46.5, 50, forward);
+    matchloader.set(true);
+    intake.spin(forward, 100, percent);
+    driveTo(-55.0, -48.25, 40, forward);
 
+    wait(1400, msec);
     setDrivetrainSpeed(10);
     wait(100, msec);
-    setDrivetrainSpeed(0);
-    wait(1200, msec);
 
     // Drive back to the close side
 
     Path return_to_our_side_matchloader_path = PathGenerator::GeneratePath(
-    	{{-57.5, -48.0},
-    	 {-50.0, -48.0},
-    	 {-38.5, -56.0},
-    	 {50, -60},
-         {56, -36}
+    	{{-57.5, -50.0},
+    	 {-50.0, -56.0},
+    	 {-38.5, -60.0},
+    	 {42, -60},
+         {44, -40}
     	},
     	45.0,
     	25.0,
     	6.0,
     	0.35,
-    	2.5
+    	2.0
     );
 
     return_to_our_side_matchloader_path.waypoints[4].onReach = []() {
@@ -230,7 +221,37 @@ void Skills(void) {
     wing.set(true);
     FollowPath(return_to_our_side_matchloader_path, reverse, 20.0);
 
-    driveTo(24, -46, 20, reverse);
+    driveTo(24, -51, 40, reverse);
+
+    // Score in long goal again
+
+    setDrivetrainSpeed(-30);
+    intake.spin(reverse, 100, percent);
+    wait(300, msec);
+
+    // Jam fix attempt
+
+    hood.set(true);
+    intake.spin(forward, 100, percent);
+    indexer.spin(forward, 100, percent);
+    wait(800, msec);
+    position_tracking.SetPosition(30.5, -48.0, inertial_sensor.heading(degrees));
+    intake.spin(reverse, 100, percent);
+    wait(150, msec);
+    intake.spin(forward, 100, percent);
+    wait(1200, msec);
+
+    // Drive into second close matchloader
+
+    matchloader.set(true);
+    driveTo(58.5, -48.0, 50, forward);
+    hood.set(false);
+
+    wait(700, msec);
+    setDrivetrainSpeed(10);
+    wait(100, msec);
+
+    driveTo(28, -47.5, 100, reverse);
 
     // Score in long goal again
 
@@ -247,5 +268,39 @@ void Skills(void) {
     intake.spin(reverse, 100, percent);
     wait(150, msec);
     intake.spin(forward, 100, percent);
-    wait(1200, msec);
+    wait(1600, msec);
+
+    driveFor(4, 100);
+    hood.set(false);
+    driveFor(-8, 50);
+
+    matchloader.set(false);
+
+    // Park!
+
+    Path park_path = PathGenerator::GeneratePath(
+	    {{30.0, -48.0},
+	     {46.0, -44.0},
+	     {52, -42},
+	     {64, -30},
+	     {66, -4},
+	    },
+	    50.0,
+	    25.0,
+	    6.0,
+	    0.8,
+	    2.0
+    );
+
+    FollowPath(park_path, forward, 16.0);
+    driveFor(-1, 100);
+    turnToHeading(5, 100);
+
+    matchloader.set(true);
+
+    wait(500, msec);
+
+    intake.spin(reverse, 100, percent);
+    driveFor(20, 35);
+    matchloader.set(false);
 }

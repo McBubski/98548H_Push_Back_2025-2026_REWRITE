@@ -11,9 +11,8 @@ competition Competition;
 
 int UpdateOdometry(void) {
     while (true) {
-        position_tracking.Update();
-
         wait(20, msec);
+        position_tracking.Update();
     }
 
     return 1;
@@ -38,11 +37,10 @@ void pre_auton(void) {
 
   color_sensor.setLightPower(100, percent);
 
-  forward_tracking_wheel.resetPosition();
-  sideways_tracking_wheel.resetPosition();
+  //forward_tracking_wheel.resetPosition();
+  //sideways_tracking_wheel.resetPosition();
 
   inertial_sensor.calibrate();
-  
   while (inertial_sensor.isCalibrating()) { wait(20, msec);}
 
   // Begins Odometry task

@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-float robotSize = 10;
+float robotSize = 12.5 - 4.0;
 Path* Display_Path = nullptr;
 
 // Displays odometry map, robot, and coordinates on brain screen

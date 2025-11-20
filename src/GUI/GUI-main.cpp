@@ -159,6 +159,7 @@ void ShowCalibrateButton(void) {
 }
 
 void CalibrateInertial(void) {
+    position_tracking.SetPositionToCurrentAuton();
     if (!inertial_sensor.isCalibrating()) {
         forward_tracking_wheel.resetPosition();
         sideways_tracking_wheel.resetPosition();

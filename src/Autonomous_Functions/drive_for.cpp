@@ -4,6 +4,7 @@
 #include "vex.h"
 
 #include <cmath>
+#include <iostream>
 
 void driveFor(double distance, double speed) {
     double targetHeading = inertial_sensor.heading();
@@ -59,6 +60,12 @@ void driveFor(double distance, double speed) {
 
         if (std::abs(driveError) <= 4) {
             drivePID.I = drive_ki;
+        }
+        
+        // Check stalling, as long as it's at least tried to move for a bit
+         if ((left_drive.current(percent) >= 99.0 || right_drive.current(percent) >= 99.0) && drivePID.Time >= drivePID.Timeout / 2) {
+            driving = false;
+            std::cout << "Stall!" << std::endl;
         }
 
         left_drive.spin(forward, (driveOutput + turnOutput), percent);

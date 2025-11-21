@@ -19,6 +19,7 @@ void LeftAuton(void) {
     matchloader.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
+    task indexerTask = task(CheckMotorStallTask);
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.00, -17.5},

@@ -22,10 +22,10 @@ void LeftAuton(void) {
     task indexerTask = task(CheckMotorStallTask);
 
     Path matchload_path = PathGenerator::GeneratePath(
-    	{{48.00, -17.5},
-    	 {40.0, -36.5},
-    	 {48.00, -59},
-    	 {72.0, -41}
+    	{{50.00, -17.5},
+    	 {46.0, -36.5},
+    	 {46.00, -60.5},
+    	 {69.0, -39.0}
     	},
     	50.0,
     	25.0,
@@ -49,11 +49,14 @@ void LeftAuton(void) {
     indexer.spin(forward, 100, percent);
     setDrivetrainSpeed(-100);
 
-    wait(400, msec);
+    intake.spin(reverse, 100, percent);
+    wait(200, msec);
+    intake.spin(forward, 100, percent);
+    wait(200, msec);
 
-    driveFor(1, 100);
+    driveFor(0.5, 100);
 
-    wait(600, msec);
+    wait(500, msec);
 
     driveFor(6, 100);
     hood.set(false);
@@ -73,20 +76,22 @@ void LeftAuton(void) {
     	},
     	40.0,
     	25.0,
-    	6.0,
+    	4.0,
     	0.6,
     	4.0
     );
 
-    middle_balls_path.waypoints[middle_balls_path.size() - 2].onReach = []() {
+    middle_balls_path.waypoints[middle_balls_path.size() - 3].onReach = []() {
+        //wait(100, msec);
         matchloader.set(true);
     };
 
     FollowPath(middle_balls_path, forward, 16.0);
 
     //pointAt(6, -6, 100, reverse);
-    driveTo(15.5, -15.5, 40, reverse);
+    driveTo(11.5, -15.5, 40, reverse);
     indexer.spin(reverse, 100, percent);
+    pointAt(0, 0, 100, reverse);
 }
 
 /*

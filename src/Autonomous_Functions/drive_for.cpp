@@ -63,7 +63,7 @@ void driveFor(double distance, double speed) {
         }
         
         // Check stalling, as long as it's at least tried to move for a bit
-         if ((left_drive.current(percent) >= 99.0 || right_drive.current(percent) >= 99.0) && drivePID.Time >= drivePID.Timeout / 2) {
+         if ((left_drive.current(percent) >= 98.0 || right_drive.current(percent) >= 98.0) && drivePID.Time >= drivePID.Timeout / 2) {
             driving = false;
             std::cout << "Stall!" << std::endl;
         }

@@ -64,7 +64,7 @@ void ElimsLeftAuton(void) {
 
     wait(1000, msec);
     intake.spin(reverse, 100, percent);
-    wait(75, msec);
+    wait(200, msec);
     intake.spin(forward, 100, percent);
     wait(1000, msec);
 

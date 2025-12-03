@@ -15,8 +15,7 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
     int lastLookaheadIndex = 0;
     int lastTriggeredIndex = 0;
 
-    std::cout << path.maxAcceleration << std::endl;
-    double maxRate = 25; // Motor percent/second
+    double maxRate = path.maxAcceleration; // Motor percent/second
     double previousTime = Brain.Timer.system();
 
     double previous_left_target_velocity = path.waypoints[0].targetVelocity;
@@ -52,11 +51,15 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
 
         // Step Four - Rate limit target velocity
         double target_velocity = path.waypoints[lastClosestIndex].targetVelocity;
-        double maxChange = dt * maxRate;
+        double maxChangeUp = dt * maxRate;
+        double maxChangeDown = dt * maxRate * 2; // Faster decceleration
         double deltaVel = target_velocity - previous_target_velocity;
 
-        if (deltaVel > maxChange) deltaVel = maxChange;
-        else if (deltaVel < -maxChange) deltaVel = -maxChange;
+        if (deltaVel > 0) { // Accelerating?
+            if (deltaVel > maxChangeUp) deltaVel = maxChangeUp;
+        } else { // Decelerating
+            if (deltaVel < -maxChangeDown) deltaVel = -maxChangeDown;
+        }
 
         target_velocity = previous_target_velocity + deltaVel;
         previous_target_velocity = target_velocity;
@@ -98,9 +101,9 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
         Waypoint lastPoint = path.waypoints[path.size() - 1];
         double distanceToEnd = GetDistance(position_tracking.GlobalXPos, position_tracking.GlobalYPos, lastPoint.x, lastPoint.y);
 
-        // && distanceToEnd < 1.0
+        // Gotta be close to last point, and within 2 inches
 
-        if (closestIndex == path.size() - 2) {
+        if (closestIndex >= path.size() - 2 && distanceToEnd <= 2.0) {
             left_drive.stop(coast);
             right_drive.stop(coast);
 

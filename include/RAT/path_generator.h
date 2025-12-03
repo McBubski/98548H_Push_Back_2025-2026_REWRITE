@@ -29,7 +29,7 @@ class Path {
     public:
         std::vector<Waypoint> waypoints;
         double maxVelocity = 50.0;
-        double maxAcceleration = 50.0;
+        double maxAcceleration = 25.0;
 
         // Add points to path
         void AddWaypoint(double x, double y, double targetVelocity = 0, double curvature = 0) {

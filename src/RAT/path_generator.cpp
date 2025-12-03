@@ -8,15 +8,12 @@
 Path PathGenerator::GeneratePath(
     std::initializer_list<std::initializer_list<double>> rawPoints,
     double _maxVelocity,
-    double _maxAcceleration ,
+    double _maxAcceleration,
     double spacing,
     double smoothing,
     double curveSlowdown
 ) {
     Path path; // Final output path
-
-    path.maxVelocity = _maxVelocity;
-    path.maxAcceleration = _maxAcceleration;
 
     std::vector<Waypoint> basePoints; // Initial unmodified points
 
@@ -53,6 +50,9 @@ Path PathGenerator::GeneratePath(
     
     // (2 - 5) Lower is higher slowdown at curves, higher is faster
     path = ComputeTargetVelocityAlongPath(path, curveSlowdown, _maxVelocity, _maxAcceleration);
+
+    path.maxVelocity = _maxVelocity;
+    path.maxAcceleration = _maxAcceleration;
 
     return path;
 }
@@ -193,7 +193,7 @@ Path PathGenerator::ComputeCurvatureAlongPath(const Path& inputPath) {
 Path PathGenerator::ComputeTargetVelocityAlongPath(const Path& inputPath, double curveSlowdown, double maxVelocity, double maxAcceleration) {
     Path newPath = inputPath;
 
-    std::cout << maxAcceleration << std::endl;
+    //std::cout << maxAcceleration << std::endl;
 
     for (size_t i = 0; i < inputPath.size(); i++) {
         newPath.waypoints[i].targetVelocity = std::min(maxVelocity, curveSlowdown / inputPath.waypoints[i].curvature);

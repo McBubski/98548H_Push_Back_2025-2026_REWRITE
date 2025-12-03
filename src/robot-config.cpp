@@ -49,5 +49,5 @@ Odometry position_tracking = Odometry(2.75 / 2.0, 0.125, 1.0625);
 // Sensors
 
 optical color_sensor = optical(PORT8);
-distance forward_distance_sensor = distance(PORT6);
+distance forward_distance_sensor = distance(PORT3);
 distance sideways_distance_sensor = distance(PORT7);

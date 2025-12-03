@@ -24,9 +24,9 @@ void RightAuton(void) {
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.00, 17.5},
-    	 {40.0, 33.5},
+    	 {47.0, 33.5},
     	 {48.00, 54.5},
-    	 {72.0, 39.0}
+    	 {72.25, 39.0}
     	},
     	50.0,
     	25.0,
@@ -51,11 +51,14 @@ void RightAuton(void) {
     indexer.spin(forward, 100, percent);
     setDrivetrainSpeed(-100);
 
-    wait(400, msec);
+    intake.spin(reverse, 100, percent);
+    wait(200, msec);
+    intake.spin(forward, 100, percent);
+    wait(200, msec);
 
     driveFor(0.5, 100);
 
-    wait(800, msec);
+    wait(500, msec);
 
     driveFor(6, 100);
     hood.set(false);
@@ -72,8 +75,8 @@ void RightAuton(void) {
     Path middle_balls_path = PathGenerator::GeneratePath(
     	{{32.0, 44},
     	 {50.0, 44.0},
-    	 {32.0, 24.0},
-    	 {8.0, 7.0}
+    	 {28.0, 24.0},
+    	 {16, 12.0}
     	},
     	35.0,
     	25.0,
@@ -82,6 +85,14 @@ void RightAuton(void) {
     	3.0
     );
 
+    middle_balls_path.waypoints[7].onReach = []() {
+        matchloader.set(true);
+    };
+
     FollowPath(middle_balls_path, forward, 16.0);
-    intake_low.spin(reverse, 100, percent);
+    driveFor(6, 30);
+    pointAt(10.25, 6, 100, forward);
+    matchloader.set(false);
+    driveFor(7.5, 30);
+    intake.spin(reverse, 100, percent);
 }

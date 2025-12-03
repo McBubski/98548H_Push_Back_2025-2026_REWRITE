@@ -1,5 +1,6 @@
 #include "Autonomous/autonomous_definitions.h"
 #include "Autonomous_Functions/auton_functions.h"
+#include "Robot/distance_calibration.h"
 #include "RAT/path_follower.h"
 
 #include "Autonomous_Paths/testing_auton.h"
@@ -9,13 +10,12 @@ void TestingAuton(void);
 Auton testingAuton = {
     "Testing Auton",
     "Testing stuff for Trey fr",
-    36, 36, 0,
+    -30.5, 48.0, 0,
     TestingAuton
 };
 
 
 void TestingAuton(void) {
-    hood.set(true);
-	intake.spin(forward, 100, percent);
-    indexer.spin(forward, 100, percent);
+    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
+    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 }

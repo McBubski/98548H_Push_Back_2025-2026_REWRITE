@@ -48,3 +48,5 @@ extern Odometry position_tracking;
 // Sensors
 
 extern optical color_sensor;
+extern distance forward_distance_sensor;
+extern distance sideways_distance_sensor;

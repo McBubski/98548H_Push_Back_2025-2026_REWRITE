@@ -1,9 +1,11 @@
 #include "DriverControl/driver_control.h"
 #include "DriverControl/driver_control_functions.h"
 #include "Robot/color_sorting.h"
+#include "Robot/distance_calibration.h"
 #include "vex.h"
 
 #include <iostream>
+#include <vector>
 
 // The goal here is to stop the indexer if it's stalling on a ball
 bool hasTorqueStalled = false;

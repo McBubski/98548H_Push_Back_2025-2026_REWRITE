@@ -55,22 +55,28 @@ void ElimsLeftAuton(void) {
 
     Path swag_coolio_matchloader_awesome_sauce_path = PathGenerator::GeneratePath(
     	{{36.0, -32.0},
-    	 {40.0, -48.5},
-         {60, -46.0},
-    	 {72.5, -47.0}
+    	 {40.0, -47.5},
+         {50, -48.5},
+    	 {60.0, -49.0}
     	},
-    	40.0,
+    	35.0,
     	25.0,
     	4.0,
-    	0.5,
-    	1.8
+    	0.8,
+    	2.0
     );
 
     FollowPath(swag_coolio_matchloader_awesome_sauce_path, forward, 12);
 
+    //driveTo(48, -48, 100, forward);
+    //turnToHeading(90, 100);
+    pointAt(70, -48, 100, forward);
+    driveFor(12, 100);
+
     //driveFor(1, 100);
 //
-    wait(400, msec);
+    //wait(400, msec);
+    pointAt(24,-48, 100, reverse);
 
     driveFor(-32, 60);
     setDrivetrainSpeed(-5);
@@ -80,28 +86,34 @@ void ElimsLeftAuton(void) {
     wait(50, msec);
     intake.spin(reverse, 100, percent);
     wait(250, msec);
+    position_tracking.SetPosition(30.5, -48.0, 90);
     indexer.spin(forward, 100, percent);
     intake.spin(forward, 100, percent);
     wait(1900, msec);
 
+    //hood.set(true);
     matchloader.set(false);
+    indexer.stop();
+    intake.stop();
     driveFor(18, 100);
-    hood.set(false);
+    //hood.set(false);
 
     Path epic_wing_awesome = PathGenerator::GeneratePath(
-    	{{46, -48.00},
-    	 {39.0, -41},
-    	 {8.0, -46}
+    	{{46, -37.0},
+    	 {45.0, -35.0},
+         {30.0, -36.0},
+    	 {9.0, -46}
     	},
     	40.0,
     	25.0,
     	4.0,
-    	0.5,
+    	0.45,
     	1.5
     );
 
     wing.set(false);
     FollowPath(epic_wing_awesome, reverse, 16);
+    driveFor(-6, 100);
 
     pointAt(24, -48, 100, forward);
 
@@ -110,3 +122,4 @@ void ElimsLeftAuton(void) {
     intake.stop();
     indexer.stop();
 }
+

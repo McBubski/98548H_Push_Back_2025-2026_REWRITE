@@ -1,10 +1,22 @@
 #include "Autonomous/autonomous.h"
 #include "Autonomous/autonomous_definitions.h"
+#include "Robot/color_sorting.h"
 #include "vex.h"
 
 #include <iostream>
 
 void autonomous() {
+    // Get color sort color (only if the preload is visible)
+
+    if (color_sensor.isNearObject()) {
+        color allianceColor = color_sensor.color();
+        if (allianceColor == red) {
+            colorSortMode = RED;
+        } else if (allianceColor == blue) {
+            colorSortMode = BLUE;
+        }
+    }
+
     // Start timer
     float startTime = Brain.Timer.system();
     std::cout << "----- Auton Start ------" << std::endl;

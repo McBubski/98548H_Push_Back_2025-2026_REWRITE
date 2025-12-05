@@ -6,7 +6,7 @@
 
 // Current alliance color, whether or not to clor sort, and an override while sorting
 
-color_sort_mode colorSortMode = BLUE;
+color_sort_mode colorSortMode = RED;
 bool colorSorting = false;
 bool colorSortingIndexerOverride = false;
 bool previousColorSortingIndexerOverride = false;

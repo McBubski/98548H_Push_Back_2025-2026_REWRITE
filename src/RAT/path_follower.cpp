@@ -103,7 +103,7 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
 
         // Gotta be close to last point, and within 2 inches
 
-        if (closestIndex >= path.size() - 2 && distanceToEnd <= 2.0) {
+        if (closestIndex >= path.size() - 3 && distanceToEnd <= 2.5) {
             left_drive.stop(coast);
             right_drive.stop(coast);
 
@@ -119,6 +119,8 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
 
         //std::cout << target_velocity << ", " << (LeftDrive.velocity(percent) + RightDrive.velocity(percent)) / 2.0 << std::endl;
         //std::cout << distanceToEnd << std::endl;
+
+        //std::cout << distanceToEnd << ", " << closestIndex << "/" << path.size() << " C: " << kappa << std::endl;
 
         // Checks Function Calls
         if (closestIndex >= lastTriggeredIndex + 1 && path.waypoints[closestIndex].onReach) {

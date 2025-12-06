@@ -4,6 +4,7 @@
 #include "Robot/color_sorting.h"
 
 #include "Autonomous_Paths/left_auton.h"
+#include <iostream>
 
 void LeftAuton(void);
 
@@ -33,6 +34,8 @@ void LeftAuton(void) {
     );
 
     FollowPath(matchload_path, forward, 12.0);
+    setDrivetrainSpeed(10);
+    wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, -44.5},
@@ -76,7 +79,7 @@ void LeftAuton(void) {
     waitUntil((color_sensor.isNearObject() && color_sensor.color() == otherColor) || (Brain.Timer.system() - startScoreTime) > 1750);
 
     // Stop scoring
-    indexer.stop();
+    indexer.spin(reverse, 100, percent);
     intake.spin(reverse, 100, percent);
     driveFor(6, 100);
 
@@ -110,6 +113,16 @@ void LeftAuton(void) {
     	2.0
     );
 
+    three_balls_path.waypoints[1].onReach = []() {
+        std::cout << "Stop indexer (1)" << std::endl;
+        indexer.stop();
+    };
+
+    three_balls_path.waypoints[2].onReach = []() {
+        std::cout << "Stop indexer (2)" << std::endl;
+        indexer.stop();
+    };
+
     intake.spin(forward, 100, percent);
     FollowPath(three_balls_path, forward, 12.0);
     matchloader.set(true);
@@ -122,8 +135,8 @@ void LeftAuton(void) {
     
     Path final_matchloader_path = PathGenerator::GeneratePath(
     	{{24.0, -24.0},
-    	 {42.0, -48.0},
-         {60.0, -48.0}
+    	 {42.0, -45.0},
+         {64.0, -46.0}
     	},
     	60.0,
     	25.0,

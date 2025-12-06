@@ -31,7 +31,7 @@ void RightAuton(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
     	 {48.0, 46.0},
-    	 {62.0, 40.0},
+    	 {64.5, 39.5},
     	},
     	50.0,
     	20.0,
@@ -41,6 +41,8 @@ void RightAuton(void) {
     );
 
     FollowPath(matchload_path, forward, 12.0);
+    setDrivetrainSpeed(10);
+    wait(1250, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, 43.5},
@@ -85,7 +87,8 @@ void RightAuton(void) {
     waitUntil((color_sensor.isNearObject() && color_sensor.color() == otherColor) || (Brain.Timer.system() - startScoreTime) > 1750);
 
     // Stop scoring
-    indexer.stop();
+    
+    indexer.spin(reverse, 100, percent);
     intake.spin(reverse, 100, percent);
     driveFor(6, 100);
 
@@ -95,9 +98,9 @@ void RightAuton(void) {
     wait(500, msec);
 
     Path middle_ball_path = PathGenerator::GeneratePath(
-    	{{36.0, 45.5},
-    	 {48.0, 45.5},
-         {11.5, 8.0}
+    	{{36.0, 47.5},
+    	 {48.0, 46.5},
+         {11.5, 7.0}
     	},
     	30.0,
     	10.0,
@@ -118,6 +121,7 @@ void RightAuton(void) {
     intake_low.spin(forward, 100, percent);
     FollowPath(middle_ball_path, forward, 14.0);
     intake.spin(reverse, 100, percent);
+    driveFor(3, 100);
 
     wait(2000, msec);
     intake.stop();

@@ -7,3 +7,7 @@ extern Path* Display_Path;
 void DrawOdometryWindow(void);
 void DrawRobotGraphic(void);
 void DrawRATPath(Path* path);
+void DrawDistanceSensorLines(void);
+void SetOdomDisplayModeToDistanceSensor(void);
+void SetOdomDisplayToRAT(void);
+void CheckOdomButtonPresses(void);

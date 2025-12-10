@@ -1,14 +1,25 @@
 #include "GUI/odometry-window.h"
 #include "GUI_Utility/field_image_buffer.h"
+#include "GUI_Utility/button.h"
 #include "Autonomous/autonomous_definitions.h"
 #include "Robot/color_sorting.h"
+#include "Robot/utility_functions.h"
 
 #include <iostream>
 
 float robotSize = 12.5 - 4.0;
+float pixelsPerInch = (200.0 / 144.0);
 Path* Display_Path = nullptr;
 
 // Displays odometry map, robot, and coordinates on brain screen
+
+bool odomScreenDebounce = false;
+const char* odomDisplayMode = "None"; // None, Distance, RAT
+
+// Buttons
+
+Button DistanceSensorDisplayButton = Button(413, 8, 60, 30, "Dist", "#d21ff2", SetOdomDisplayModeToDistanceSensor);
+Button RATDisplayButton = Button(413, 48, 60, 30, "RAT", "#d21ff2", SetOdomDisplayToRAT);
 
 void DrawOdometryWindow() {
     // Flips values depending on color
@@ -29,18 +40,33 @@ void DrawOdometryWindow() {
 
     Brain.Screen.setFillColor(black);
     Brain.Screen.setFont(vex::fontType::mono15);
-    Brain.Screen.printAt(390, 230, "%.1f°", fixedHeading);
+    Brain.Screen.printAt(360, 230, "%.1f°", fixedHeading);
 
-    Brain.Screen.printAt(240, 230, "(%.2f, %.2f)", position_tracking.GlobalXPos * colorSide, position_tracking.GlobalYPos * colorSide);
+    Brain.Screen.printAt(200, 230, "(%.2f, %.2f)", position_tracking.GlobalXPos * colorSide, position_tracking.GlobalYPos * colorSide);
 
     // Field and Robot
 
-    Brain.Screen.drawImageFromBuffer(Brain_Scaled_Field, 234, 7, sizeof(Brain_Scaled_Field));
+    Brain.Screen.drawImageFromBuffer(Brain_Scaled_Field, 200, 7, sizeof(Brain_Scaled_Field));
 
-    DrawRATPath(Display_Path);
+    // Draw Distance Lines if needed
+
+    if (odomDisplayMode == "Distance") {
+        DrawDistanceSensorLines();
+    }
+
+    // Draw Robot
 
     DrawRobotGraphic();
-}
+
+    // Check button pressed
+
+    CheckOdomButtonPresses();
+
+    // Buttons
+
+    DistanceSensorDisplayButton.display();
+    RATDisplayButton.display();
+}   
 
 // Displays visualization of robot
 
@@ -60,7 +86,6 @@ void DrawRobotGraphic(void) {
     double adjusted_y = autons[auton_path]->startY - (y_offset_from_starting * colorSide);
 
     // Calculates where robot should be drawn
-    float pixelsPerInch = (200.0 / 144.0);
     float XOnBrainScreen = 337 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
     float YOnbrainScreen = 110 + (-pixelsPerInch * position_tracking.GlobalYPos * colorSide);
 
@@ -95,7 +120,7 @@ void DrawRobotGraphic(void) {
 
     // Draws heading indication arrow
     Brain.Screen.setPenColor(red);
-    Brain.Screen.setPenWidth(4);
+    Brain.Screen.setPenWidth(5);
     
     Brain.Screen.drawLine(XOnBrainScreen, YOnbrainScreen, XOnBrainScreen + headingX * 15, YOnbrainScreen - headingY * 15);
 }
@@ -106,7 +131,6 @@ void DrawRATPath(Path* path) {
     for (const auto& point : path->waypoints) {
         // Calculates where robot should be drawn
 
-        float pixelsPerInch = (200.0 / 144.0);
         double screen_x = 337 + (pixelsPerInch * point.x);
         double screen_y = 110 + (-pixelsPerInch * point.y);
 
@@ -123,4 +147,67 @@ void DrawRATPath(Path* path) {
 
     Brain.Screen.setPenColor(white);
     Brain.Screen.printAt(200, 30, "%d", static_cast<int>(path->size()));
+}
+
+void DrawBeam(double distance, double angle) {
+    int colorSide = 1;
+    double angleColorOffset = 0;
+
+    if (colorSortMode == RED) {
+        colorSide = -1;
+        angleColorOffset = 180.0;
+    } 
+
+    float originX = 337 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
+    float originY = 110 + (-pixelsPerInch * position_tracking.GlobalYPos * colorSide);
+
+    double beamlength = distance * pixelsPerInch;
+    double xDirection = sin(DegToRad(angle + angleColorOffset));
+    double yDirection = cos(DegToRad(angle + angleColorOffset));
+
+    Brain.Screen.setPenColor(blue);
+    Brain.Screen.setPenWidth(4);
+
+    // Really far, basically no reading
+
+    if (distance >= 390.0) {
+        Brain.Screen.setPenColor(yellow);
+        beamlength = 14.0 * pixelsPerInch;
+    };    
+
+    Brain.Screen.drawLine(
+        originX, 
+        originY, 
+        originX + xDirection * beamlength, 
+        originY - yDirection * beamlength
+    );
+}
+
+void DrawDistanceSensorLines(void) {
+    DrawBeam(left_distance_sensor.objectDistance(inches), inertial_sensor.heading() - 90.0);
+    DrawBeam(right_distance_sensor.objectDistance(inches), inertial_sensor.heading() + 90.0);
+    DrawBeam(forward_distance_sensor.objectDistance(inches), inertial_sensor.heading());
+}
+
+void SetOdomDisplayModeToDistanceSensor(void) {
+    odomDisplayMode = "Distance";
+}
+
+void SetOdomDisplayToRAT(void) {
+    odomDisplayMode = "RAT";
+}
+
+void CheckOdomButtonPresses(void) {
+    if (Brain.Screen.pressing()) {
+        if (odomScreenDebounce == false) {
+            odomScreenDebounce = true;
+
+            int x = Brain.Screen.xPosition();
+            int y = Brain.Screen.yPosition(); 
+
+            DistanceSensorDisplayButton.checkPress(x, y);
+        }
+    } else {
+        odomScreenDebounce = false;
+    }
 }

@@ -86,7 +86,7 @@ void DrawRobotGraphic(void) {
     double adjusted_y = autons[auton_path]->startY - (y_offset_from_starting * colorSide);
 
     // Calculates where robot should be drawn
-    float XOnBrainScreen = 337 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
+    float XOnBrainScreen = 303 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
     float YOnbrainScreen = 110 + (-pixelsPerInch * position_tracking.GlobalYPos * colorSide);
 
     // Calculates line offsets for drawing border
@@ -158,7 +158,7 @@ void DrawBeam(double distance, double angle) {
         angleColorOffset = 180.0;
     } 
 
-    float originX = 337 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
+    float originX = 303 + (pixelsPerInch * position_tracking.GlobalXPos * colorSide);
     float originY = 110 + (-pixelsPerInch * position_tracking.GlobalYPos * colorSide);
 
     double beamlength = distance * pixelsPerInch;
@@ -187,6 +187,8 @@ void DrawDistanceSensorLines(void) {
     DrawBeam(left_distance_sensor.objectDistance(inches), inertial_sensor.heading() - 90.0);
     DrawBeam(right_distance_sensor.objectDistance(inches), inertial_sensor.heading() + 90.0);
     DrawBeam(forward_distance_sensor.objectDistance(inches), inertial_sensor.heading());
+
+    Brain.Screen.printAt(413, 70, "Fwd:");
 }
 
 void SetOdomDisplayModeToDistanceSensor(void) {

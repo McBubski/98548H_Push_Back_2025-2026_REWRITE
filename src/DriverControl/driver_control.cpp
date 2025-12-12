@@ -39,6 +39,12 @@ void drivercontrol(void) {
 
         // Indexer
 
+        if (Controller.ButtonL2.pressing()) {
+            indexer_piston.set(true);
+        } else {
+            indexer_piston.set(false);
+        }
+
         if (Controller.ButtonL1.pressing()) {       // To score long goal
             intake.spin(forward, 100, percent);
 

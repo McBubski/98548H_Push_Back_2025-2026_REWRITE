@@ -36,6 +36,7 @@ extern digital_out matchloader;
 extern digital_out wing;
 extern digital_out tracking_wheel_piston;
 extern digital_out hood;
+extern digital_out indexer_piston;
 
 // Odometry
 

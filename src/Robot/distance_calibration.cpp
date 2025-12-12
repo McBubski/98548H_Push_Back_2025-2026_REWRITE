@@ -43,8 +43,11 @@ std::vector<double> FieldPositionFromDistance() {
     return estimatedFieldPosition;
 }
 
-
 std::vector<double> EstimatePositionWithDistance(Wall closestWall) {
+    return EstimatePositionWithDistance(closestWall, Right);
+}
+
+std::vector<double> EstimatePositionWithDistance(Wall closestWall, SensorSide sensorSide) {
     std::vector<double> estimatedFieldPosition;
 
     double estimatedXPos = 0.0;
@@ -53,6 +56,8 @@ std::vector<double> EstimatePositionWithDistance(Wall closestWall) {
     // Get current sensor data
     double distance_forwards = 0;
     double distance_right = 0;
+
+    int LeftRightMultiplier = (sensorSide == Left) ? -1 : 1;
 
     // Get average to reduce noise
 

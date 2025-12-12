@@ -37,6 +37,7 @@ digital_out matchloader = digital_out(Brain.ThreeWirePort.A);
 digital_out wing = digital_out(Brain.ThreeWirePort.B);
 digital_out tracking_wheel_piston = digital_out(Brain.ThreeWirePort.C);
 digital_out hood = digital_out(Brain.ThreeWirePort.D);
+digital_out indexer_piston = digital_out(Brain.ThreeWirePort.E);
 
 // Odometry
 

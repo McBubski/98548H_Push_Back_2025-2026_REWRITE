@@ -23,26 +23,26 @@ void LeftAuton(void) {
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, -25.0},
-    	 {48.0, -47.0},
-    	 {62.0, -41.0},
+    	 {48.0, -48.0},
+    	 {63.5, -38.0},
     	},
     	50.0,
     	20.0,
-    	3.0,
+    	2.0,
     	0.55,
     	0.20
     );
 
-    FollowPath(matchload_path, forward, 12.0);
+    FollowPath(matchload_path, forward, 14.0);
     setDrivetrainSpeed(10);
     wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, -44.5},
-    	 {33.0, -44.5},
+    	{{56.0, -40.5},
+    	 {33.0, -39.5},
     	},
     	50.0,
-    	20.0,
+    	10.0,
     	3,
     	0.6,
     	3.0
@@ -76,10 +76,45 @@ void LeftAuton(void) {
 
     // Wait until we see blue, or theres a timeout
     int startScoreTime = Brain.Timer.system();
-    waitUntil((color_sensor.isNearObject() && color_sensor.color() == otherColor) || (Brain.Timer.system() - startScoreTime) > 1750);
+    bool scoring = true;
+
+    color_sensor.objectDetectThreshold(1);
+
+    while (scoring) {
+        if (color_sensor.color() == red) {
+            std::cout << "Seeing: Red"  << std::endl;
+        } else if (color_sensor.color() == blue) {
+            std::cout << "Seeing: Blue"  << std::endl;
+        } else if (color_sensor.color() == cyan) {
+            std::cout << "Seeing: Cyan"  << std::endl;
+        } else {
+            std::cout << "Seeing: None"  << std::endl;
+        }
+
+        if (color_sensor.isNearObject())  {
+            if ((Brain.Timer.system() - startScoreTime) > 1750) {
+                scoring = false;
+            }
+
+            if (otherColor == blue) {
+                if (color_sensor.color() == blue || color_sensor.color() == cyan) {
+                    scoring = false;
+                }
+            } else if (otherColor == red) {
+                if (color_sensor.color() == red) {
+                    scoring = false;
+                }
+            }
+        } else {
+            scoring = false;
+        }
+        wait(20, msec);
+    }
+
+    std::cout << "sorted" << std::endl;
 
     // Stop scoring
-    indexer.spin(reverse, 100, percent);
+    indexer_piston.set(false);
     intake.spin(reverse, 100, percent);
     driveFor(6, 100);
 
@@ -127,10 +162,10 @@ void LeftAuton(void) {
     FollowPath(three_balls_path, forward, 12.0);
     matchloader.set(true);
 
-    pointAt(6, -6, 100, reverse);
+    pointAt(6.5, -6, 100, reverse);
 
-    driveFor(-16.0, 100);
-    indexer.spin(reverse, 60, percent);
+    driveFor(-17.5, 100);
+    indexer_piston.set(true);
     wait(1500, msec);
     
     Path final_matchloader_path = PathGenerator::GeneratePath(

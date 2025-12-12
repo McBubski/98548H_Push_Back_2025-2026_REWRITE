@@ -20,8 +20,8 @@ Auton rightAuton = {
 void RightAuton(void) {
     // Drives into matchloader and gets three balls
 
-    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
-    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
@@ -45,8 +45,8 @@ void RightAuton(void) {
     wait(1250, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 43.5},
-    	 {30.0, 43.5},
+    	{{56.0, 42.5},
+    	 {30.0, 42.0},
     	},
     	50.0,
     	20.0,
@@ -67,7 +67,7 @@ void RightAuton(void) {
 
     matchloader.set(false);
     setDrivetrainSpeed(-10);
-    indexer.spin(forward, 100, percent);
+    //indexer_piston.set(true);
     intake.spin(forward, 100, percent);
     hood.set(true);
 
@@ -83,12 +83,46 @@ void RightAuton(void) {
     }
 
     // Wait until we see blue, or theres a timeout
-    int startScoreTime = Brain.Timer.system();
-    waitUntil((color_sensor.isNearObject() && color_sensor.color() == otherColor) || (Brain.Timer.system() - startScoreTime) > 1750);
+   int startScoreTime = Brain.Timer.system();
+    bool scoring = true;
+
+    color_sensor.objectDetectThreshold(1);
+
+    while (scoring) {
+        if (color_sensor.color() == red) {
+            std::cout << "Seeing: Red"  << std::endl;
+        } else if (color_sensor.color() == blue) {
+            std::cout << "Seeing: Blue"  << std::endl;
+        } else if (color_sensor.color() == cyan) {
+            std::cout << "Seeing: Cyan"  << std::endl;
+        } else {
+            std::cout << "Seeing: None"  << std::endl;
+        }
+
+        if (color_sensor.isNearObject())  {
+            if ((Brain.Timer.system() - startScoreTime) > 1750) {
+                scoring = false;
+            }
+
+            if (otherColor == blue) {
+                if (color_sensor.color() == blue || color_sensor.color() == cyan) {
+                    scoring = false;
+                }
+            } else if (otherColor == red) {
+                if (color_sensor.color() == red) {
+                    scoring = false;
+                }
+            }
+        } else {
+            scoring = false;
+        }
+        wait(20, msec);
+    }
+
+    std::cout << "sorted" << std::endl;
 
     // Stop scoring
-    
-    indexer.spin(reverse, 100, percent);
+    indexer_piston.set(false);
     intake.spin(reverse, 100, percent);
     driveFor(6, 100);
 
@@ -100,7 +134,7 @@ void RightAuton(void) {
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {11.5, 7.0}
+         {11.0, 8.0}
     	},
     	30.0,
     	10.0,
@@ -120,11 +154,8 @@ void RightAuton(void) {
     intake.stop();
     intake_low.spin(forward, 100, percent);
     FollowPath(middle_ball_path, forward, 14.0);
-    intake.spin(reverse, 100, percent);
-    driveFor(3, 100);
-
-    wait(2000, msec);
-    intake.stop();
+    intake.spin(reverse, 80, percent);
+    driveFor(4, 100);
 
     //setDrivetrainSpeed(5);
 //

@@ -75,7 +75,7 @@ void Skills(void) {
 
     
     //pointAt(-23, 47.5, 100, reverse);
-    driveTo(-23, 45.0, 70, reverse);
+    driveTo(-23, 44.0, 70, reverse);
 
 
     setDrivetrainSpeed(-20);
@@ -95,7 +95,7 @@ void Skills(void) {
     intake.spin(reverse, 100, percent);
     wait(200, msec);
     intake.spin(forward, 100, percent);
-    wait(2500, msec);
+    wait(3000, msec);
 
     // Drive into farside matchloader
 
@@ -160,8 +160,8 @@ void Skills(void) {
 
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-38.0, 46.0},
-    	 {-57.0, 26.0},
-    	 {-65.0, 11.0}
+    	 {-61.0, 26.0},
+    	 {-68.0, 11.0}
     	},
     	50.0,
     	25.0,
@@ -172,14 +172,14 @@ void Skills(void) {
 
     matchloader.set(false);
     FollowPath(clear_first_park_zone_path, forward, 20.0);
-    turnToHeading(180, 100);
+    turnToHeading(183, 100);
     //driveFor(3, 100);
 
     // Clear zone
     matchloader.set(true);
     tracking_wheel_piston.set(true);
     wait(200, msec);
-    setDrivetrainSpeed(30);
+    setDrivetrainSpeed(35);
 
     int startTime = Brain.Timer.system();
     bool clearing = true;
@@ -232,6 +232,7 @@ void Skills(void) {
 
     FollowPath(drive_to_third_matchloader_path, forward, 18.0);
 
+
     pointAt(-64, -46.5, 100, forward);
     driveFor(-4, 100);
     matchloader.set(true);
@@ -253,7 +254,7 @@ void Skills(void) {
 
     setDrivetrainSpeed(10);
 
-    wait(1400, msec);
+    wait(1800, msec);
 
     Path first_second_long_goal_path = PathGenerator::GeneratePath(
     	{{-57.5, -48.0},
@@ -403,8 +404,8 @@ void Skills(void) {
 
             matchloader.set(false);
 
-            left_drive.stop(brake);
-            right_drive.stop(brake);
+            //left_drive.stop(brake);
+            //right_drive.stop(brake);
         }
     }
     //waitUntil((forward_distance_sensor.objectDistance(inches) <= 66.0 && Brain.Timer.system() - startTime >= 1500)); 
@@ -490,6 +491,8 @@ void Skills(void) {
     wait(100, msec);
 
     // Drive back to the close side
+
+    
 
     Path return_to_our_side_matchloader_path = PathGenerator::GeneratePath(
     	{{-57.5, -50.0},

@@ -24,7 +24,7 @@ void LeftAuton(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, -25.0},
     	 {48.0, -48.0},
-    	 {63.5, -38.0},
+    	 {63.5, -40.0},
     	},
     	50.0,
     	20.0,
@@ -38,8 +38,8 @@ void LeftAuton(void) {
     wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, -40.5},
-    	 {33.0, -39.5},
+    	{{56.0, -44.5},
+    	 {33.0, -44.5},
     	},
     	50.0,
     	10.0,
@@ -48,18 +48,10 @@ void LeftAuton(void) {
     	3.0
     );
     
-    // Reverse intake a bit to prevent jams
-    goal_path.waypoints[3].onReach = []() {
-        intake.spin(reverse, 100, percent);
-        wait(300, msec);
-        intake.stop();
-    };
-
     FollowPath(goal_path, reverse, 18.0);
 
     matchloader.set(false);
     setDrivetrainSpeed(-10);
-    indexer.spin(forward, 100, percent);
     intake.spin(forward, 100, percent);
     hood.set(true);
 
@@ -78,40 +70,24 @@ void LeftAuton(void) {
     int startScoreTime = Brain.Timer.system();
     bool scoring = true;
 
-    color_sensor.objectDetectThreshold(1);
 
-    while (scoring) {
-        if (color_sensor.color() == red) {
-            std::cout << "Seeing: Red"  << std::endl;
-        } else if (color_sensor.color() == blue) {
-            std::cout << "Seeing: Blue"  << std::endl;
-        } else if (color_sensor.color() == cyan) {
-            std::cout << "Seeing: Cyan"  << std::endl;
-        } else {
-            std::cout << "Seeing: None"  << std::endl;
-        }
+    //while (scoring) {
+    //    if ((Brain.Timer.system() - startScoreTime) > 1750) {
+    //        scoring = false;
+    //    }
+    //    if (otherColor == blue) {
+    //        if (color_sensor.color() == blue) {
+    //            scoring = false;
+    //        }
+    //    } else if (otherColor == red) {
+    //        if (color_sensor.color() == red) {
+    //            scoring = false;
+    //        }
+    //    }
+    //    wait(20, msec);
+    //}
 
-        if (color_sensor.isNearObject())  {
-            if ((Brain.Timer.system() - startScoreTime) > 1750) {
-                scoring = false;
-            }
-
-            if (otherColor == blue) {
-                if (color_sensor.color() == blue || color_sensor.color() == cyan) {
-                    scoring = false;
-                }
-            } else if (otherColor == red) {
-                if (color_sensor.color() == red) {
-                    scoring = false;
-                }
-            }
-        } else {
-            scoring = false;
-        }
-        wait(20, msec);
-    }
-
-    std::cout << "sorted" << std::endl;
+    wait(1250, msec);
 
     // Stop scoring
     indexer_piston.set(false);

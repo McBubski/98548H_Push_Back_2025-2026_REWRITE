@@ -16,13 +16,13 @@ void driveFor(double distance, double speed) {
 
     double turn_kp = 0.375;
     double turn_ki = 0.01;
-    double turn_kd = 0.7;
+    double turn_kd = 0.65;
 
-    double drive_kp = 2.85;
+    double drive_kp = 2.65;
     double drive_ki = 0.075;
-    double drive_kd = 3.5 ;
+    double drive_kd = 3.85;
 
-    double acceleration = 0.1;
+    double acceleration = 0.15;
 
     PID drivePID = PID(drive_kp, 0, drive_kd, acceleration, 10, speed, timeout, 100);
     PID turnPID = PID(turn_kp, turn_ki, turn_kd, 100, 5, 100, 99999999, 0);//0.48, 0.0001, 2.75,

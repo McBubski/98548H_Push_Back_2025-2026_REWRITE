@@ -4,6 +4,7 @@
 #include "vex.h"
 
 void FollowPath(Path& path, vex::directionType direction = vex::directionType::fwd, double lookaheadDistance = 24.0);
+extern bool RAT_Interrupt;
 
 // Utility
 

@@ -13,15 +13,15 @@ void turnToHeading(double heading, double turnSpeed) {
     double startError = error;
     double previousTime = Brain.Timer.system();
 
-    double timeout = 750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
+    double timeout = 750 + (std::abs(startError) / 360.0) * 1600; // Base timeout plus extra time for larger turns
 
     std::cout << timeout << std::endl;
 
     bool notDone = true;
 
-    double p = 0.38;
+    double p = 0.35;
     double i = 0.01;
-    double d = 0.6;
+    double d = 0.70;
 
     double acceleration = 1.0;
 

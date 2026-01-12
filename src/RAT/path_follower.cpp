@@ -6,6 +6,8 @@
 
 // Follows a path, with a lookahead distance
 
+bool RAT_Interrupt = false;
+
 void FollowPath(Path& path, vex::directionType direction, double lookaheadDistance) {
     bool driving = true;
     
@@ -25,7 +27,7 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
     double abs_velocity_target = 0.0;
 
     double pathLength = path.waypoints[path.size() - 1].distanceAlongPath;
-    double timeout = std::max(1000.0, (std::floor(pathLength) * 100.0));
+    double timeout = std::max(1000.0, (std::floor(pathLength) * 90.0));
     double startTime = Brain.Timer.system();
 
     double kA = 0.02;//0.02;
@@ -115,6 +117,11 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
             right_drive.stop(coast);
 
             driving = false;
+        }
+
+        if (RAT_Interrupt) {
+            driving = false;
+            RAT_Interrupt = false;
         }
 
         //std::cout << "Path size: " << path.size() << ", Lookahead Index: " << closestIndex << ", L.A. Point: (" << lookaheadPoint.x << ", " << lookaheadPoint.y << ")" << std::endl;

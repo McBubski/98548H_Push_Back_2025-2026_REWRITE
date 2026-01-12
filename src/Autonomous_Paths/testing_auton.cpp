@@ -11,13 +11,14 @@ void TestingAuton(void);
 Auton testingAuton = {
     "Testing Auton",
     "Testing stuff for Trey fr",
-    0, 0, 270,
+    0, 0, 0,
     TestingAuton
 };
 
 
 void TestingAuton(void) {
-	intake.spin(forward, 100, percent);
+    driveFor(24, 100);
+	/*intake.spin(forward, 100, percent);
     hood.set(true);
 
     color_sort_mode allianceColor = colorSortMode;
@@ -51,5 +52,5 @@ void TestingAuton(void) {
     }
 
     intake.spin(reverse, 100, percent);
-    hood.set(false);
+    hood.set(false);*/
 }

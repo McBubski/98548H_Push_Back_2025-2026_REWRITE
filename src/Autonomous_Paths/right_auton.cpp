@@ -22,6 +22,15 @@ void RightAuton(void) {
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    
+    if (color_sensor.isNearObject()) {
+        color allianceColor = color_sensor.color();
+        if (allianceColor == red) {
+            colorSortMode = RED;
+        } else if (allianceColor == blue) {
+            colorSortMode = BLUE;
+        }
+    }
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
@@ -34,7 +43,7 @@ void RightAuton(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
     	 {48.0, 46.0},
-    	 {64.5, 39.5},
+    	 {66.0, 40.5},
     	},
     	50.0,
     	20.0,
@@ -44,12 +53,12 @@ void RightAuton(void) {
     );
 
     FollowPath(matchload_path, forward, 12.0);
-    setDrivetrainSpeed(10);
-    wait(1250, msec);
+    //setDrivetrainSpeed(10);
+    //wait(500, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, 44.5},
-    	 {28.5, 44.0},
+    	 {30.0, 44.0},
     	},
     	50.0,
     	20.0,
@@ -59,17 +68,17 @@ void RightAuton(void) {
     );
     
     // Reverse intake a bit to prevent jams
-    goal_path.waypoints[3].onReach = []() {
+    /*goal_path.waypoints[3].onReach = []() {
         std::cout << "Reversing!" << std::endl;
         intake.spin(reverse, 100, percent);
         wait(300, msec);
         intake.stop();
-    };
+    };*/
 
     FollowPath(goal_path, reverse, 18.0);
 
     matchloader.set(false);
-    setDrivetrainSpeed(-10);
+    driveFor(-2, 100);
     intake.spin(forward, 100, percent);
     hood.set(true);
 
@@ -108,13 +117,16 @@ void RightAuton(void) {
     std::cout << "sorted" << std::endl;
 
     // Stop scoring
+    driveFor(6, 100);
+    setDrivetrainSpeed(-100);
     hood.set(false);
+    wait(400, msec);
     indexer_piston.set(true);
 
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {11.0, 7.0}
+         {9.0, 8.0}
     	},
     	30.0,
     	10.0,
@@ -128,10 +140,4 @@ void RightAuton(void) {
     FollowPath(middle_ball_path, forward, 14.0);
     intake.spin(reverse, 40, percent);
     driveFor(4, 100);
-
-    left_drive.setStopping(hold);
-    right_drive.setStopping(hold);
-
-    driveTo(34, 32, 100, reverse);
-    driveTo(5, 35.5, 80, forward);
 }

@@ -30,11 +30,20 @@ int forceStop() {
 }
 
 void LeftAuton(void) {
+    if (color_sensor.isNearObject()) {
+        color allianceColor = color_sensor.color();
+        if (allianceColor == red) {
+            colorSortMode = RED;
+        } else if (allianceColor == blue) {
+            colorSortMode = BLUE;
+        }
+    }
+
     matchloader.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
-    task rumble = task(forceStop);
+    //task rumble = task(forceStop);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Neg, Left);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
@@ -141,7 +150,7 @@ void LeftAuton(void) {
     matchloader.set(true);
     indexer_piston.set(false);
 
-    pointAt(6.5, -6, 100, reverse);
+    pointAt(8.5, -6, 100, reverse);
 
     driveFor(-17.5, 100);
     indexer_piston.set(true);

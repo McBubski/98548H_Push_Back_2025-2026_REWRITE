@@ -23,6 +23,9 @@ void drivercontrol(void) {
     Controller.ButtonY.pressed(toggleHood);
     Controller.ButtonRight.pressed(toggleWing);
 
+    left_drive.setStopping(coast);
+    right_drive.setStopping(coast);
+
     // No need for odometry during driver, so we raise the wheel to protect it
 
     tracking_wheel_piston.set(true);

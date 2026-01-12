@@ -28,6 +28,9 @@ void RightAuton(void) {
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
 
+    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos, Right);
+    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
     	 {48.0, 46.0},
@@ -66,8 +69,7 @@ void RightAuton(void) {
     FollowPath(goal_path, reverse, 18.0);
 
     matchloader.set(false);
-    //setDrivetrainSpeed(-10);
-    //indexer_piston.set(true);
+    setDrivetrainSpeed(-10);
     intake.spin(forward, 100, percent);
     hood.set(true);
 
@@ -83,53 +85,31 @@ void RightAuton(void) {
     }
 
     // Wait until we see blue, or theres a timeout
-   int startScoreTime = Brain.Timer.system();
+    int startScoreTime = Brain.Timer.system();
     bool scoring = true;
 
-    color_sensor.objectDetectThreshold(1);
 
     while (scoring) {
-        if (color_sensor.color() == red) {
-            std::cout << "Seeing: Red"  << std::endl;
-        } else if (color_sensor.color() == blue) {
-            std::cout << "Seeing: Blue"  << std::endl;
-        } else if (color_sensor.color() == cyan) {
-            std::cout << "Seeing: Cyan"  << std::endl;
-        } else {
-            std::cout << "Seeing: None"  << std::endl;
-        }
-
-        if (color_sensor.isNearObject())  {
-            if ((Brain.Timer.system() - startScoreTime) > 1750) {
-                scoring = false;
-            }
-
-            if (otherColor == blue) {
-                if (color_sensor.color() == blue || color_sensor.color() == cyan) {
-                    scoring = false;
-                }
-            } else if (otherColor == red) {
-                if (color_sensor.color() == red) {
-                    scoring = false;
-                }
-            }
-        } else {
+        if ((Brain.Timer.system() - startScoreTime) > 3000) {
             scoring = false;
         }
-        wait(20, msec);
+        if (otherColor == blue) {
+            if (color_sensor.color() == blue) {
+                scoring = false;
+            }
+        } else if (otherColor == red) {
+            if (color_sensor.color() == red) {
+                scoring = false;
+            }
+        }
+        wait(5, msec);
     }
 
     std::cout << "sorted" << std::endl;
 
     // Stop scoring
-    indexer_piston.set(false);
-    intake.spin(reverse, 100, percent);
-    driveFor(6, 100);
-
-    // Bump
     hood.set(false);
-    setDrivetrainSpeed(-50);
-    wait(500, msec);
+    indexer_piston.set(true);
 
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
@@ -143,77 +123,15 @@ void RightAuton(void) {
     	2.0
     );
 
-    middle_ball_path.waypoints[2].onReach = []() {
-        indexer.spin(reverse, 100, percent);
-    };
-
-    middle_ball_path.waypoints[4].onReach = []() {
-        indexer.stop();
-    };
-
     intake.stop();
     intake_low.spin(forward, 100, percent);
     FollowPath(middle_ball_path, forward, 14.0);
     intake.spin(reverse, 40, percent);
     driveFor(4, 100);
 
-    //setDrivetrainSpeed(5);
-//
-    //wait(900, msec);
-//
-    //driveFor(-6, 50);
-    //pointAt(24, 47, 100, reverse);
-    //driveFor(-24, 49);
-//
-//
-    //// Drives into long goal
-//
-    //hood.set(true);
-    //indexer.spin(forward, 100, percent);
-    //setDrivetrainSpeed(-100);
-//
-    //intake.spin(reverse, 100, percent);
-    //wait(200, msec);
-    //intake.spin(forward, 100, percent);
-    //wait(200, msec);
-//
-    //driveFor(0.5, 100);
-//
-    //wait(500, msec);
-//
-    //driveFor(6, 100);
-    //hood.set(false);
-    //setDrivetrainSpeed(-100);
-//
-    //wait(600, msec);
-//
-    //matchloader.set(false);
-    //intake.stop();
-    //intake_low.spin(forward, 100, percent);
-//
-    //// Gets three middle balls
-//
-    //Path middle_balls_path = PathGenerator::GeneratePath(
-    //	{{32.0, 44},
-    //	 {50.0, 44.0},
-    //	 {28.0, 24.0},
-    //	 {16, 12.0}
-    //	},
-    //	35.0,
-    //	25.0,
-    //	6.0,
-    //	0.6,
-    //	3.0
-    //);
-//
-    //middle_balls_path.waypoints[7].onReach = []() {
-    //    matchloader.set(true);
-    //};
-//
-    //FollowPath(middle_balls_path, forward, 16.0);
-    //driveFor(6, 30);
-    //pointAt(10.25, 6, 100, forward);
-    //matchloader.set(false);
-    //driveFor(7.5, 30);
-    //intake.spin(reverse, 100, percent);
+    left_drive.setStopping(hold);
+    right_drive.setStopping(hold);
+
+    driveTo(34, 32, 100, reverse);
+    driveTo(5, 35.5, 80, forward);
 }

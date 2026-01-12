@@ -22,7 +22,7 @@ int ColorSortTask(void) {
 
         // Are we color sorting?
         if (colorSorting) {
-            // Is there a ball ready to be sorted?
+            // Is there a ball ready /to be sorted?
             if (color_sensor.isNearObject()) {
                 // Save current color
                 color currentColor = color_sensor.color();

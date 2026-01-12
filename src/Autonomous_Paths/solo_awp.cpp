@@ -19,8 +19,8 @@ Auton soloAWPAuton = {
 void SoloAWPAuton(void) {
     // Score in middle goal
 
-    matchloader.set(true);
-    intake.spin(forward, 100, percent);
+    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos, Right);
+    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
@@ -80,40 +80,24 @@ void SoloAWPAuton(void) {
     }
 
     // Wait until we see blue, or theres a timeout
-   int startScoreTime = Brain.Timer.system();
+    int startScoreTime = Brain.Timer.system();
     bool scoring = true;
 
-    color_sensor.objectDetectThreshold(1);
 
     while (scoring) {
-        if (color_sensor.color() == red) {
-            std::cout << "Seeing: Red"  << std::endl;
-        } else if (color_sensor.color() == blue) {
-            std::cout << "Seeing: Blue"  << std::endl;
-        } else if (color_sensor.color() == cyan) {
-            std::cout << "Seeing: Cyan"  << std::endl;
-        } else {
-            std::cout << "Seeing: None"  << std::endl;
-        }
-
-        if (color_sensor.isNearObject())  {
-            if ((Brain.Timer.system() - startScoreTime) > 1750) {
-                scoring = false;
-            }
-
-            if (otherColor == blue) {
-                if (color_sensor.color() == blue || color_sensor.color() == cyan) {
-                    scoring = false;
-                }
-            } else if (otherColor == red) {
-                if (color_sensor.color() == red) {
-                    scoring = false;
-                }
-            }
-        } else {
+        if ((Brain.Timer.system() - startScoreTime) > 3000) {
             scoring = false;
         }
-        wait(20, msec);
+        if (otherColor == blue) {
+            if (color_sensor.color() == blue) {
+                scoring = false;
+            }
+        } else if (otherColor == red) {
+            if (color_sensor.color() == red) {
+                scoring = false;
+            }
+        }
+        wait(5, msec);
     }
 
     std::cout << "sorted" << std::endl;

@@ -1,6 +1,7 @@
 #include "Autonomous/autonomous_definitions.h"
 #include "Autonomous_Functions/auton_functions.h"
 #include "RAT/path_follower.h"
+#include "Robot/distance_calibration.h"
 
 #include "Autonomous_Paths/elims_left_auton.h"
 #include <iostream>
@@ -31,6 +32,8 @@ void ElimsLeftAuton(void) {
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
+
+    ResetFieldPositionFromDistanceWithOdometry();
 
     Path three_super_ball_epic_path_supreme = PathGenerator::GeneratePath(
     	{{46.0, -16.0},

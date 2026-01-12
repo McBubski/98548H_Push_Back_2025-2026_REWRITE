@@ -2,6 +2,7 @@
 #include "Autonomous_Functions/auton_functions.h"
 #include "RAT/path_follower.h"
 #include "Robot/color_sorting.h"
+#include "Robot/distance_calibration.h"
 
 #include "Autonomous_Paths/left_auton.h"
 #include <iostream>
@@ -15,11 +16,30 @@ Auton leftAuton = {
     LeftAuton
 };
 
+int forceStop() {
+    int startTime = Brain.Timer.system();
+    while (true) {
+        if (Brain.Timer.system() - startTime >= 15000) {
+            Controller.rumble("-");
+            //std::cout << Brain.Timer.system() - startTime << std::endl;
+        }
+
+        wait(20, msec);
+    };
+    return 1;
+}
+
 void LeftAuton(void) {
     matchloader.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
+    task rumble = task(forceStop);
+
+    //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Neg, Left);
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+
+    ResetFieldPositionFromDistanceWithOdometry();
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, -25.0},
@@ -35,7 +55,7 @@ void LeftAuton(void) {
 
     FollowPath(matchload_path, forward, 14.0);
     setDrivetrainSpeed(10);
-    wait(1000, msec);
+    //wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, -44.5},
@@ -71,33 +91,25 @@ void LeftAuton(void) {
     bool scoring = true;
 
 
-    //while (scoring) {
-    //    if ((Brain.Timer.system() - startScoreTime) > 1750) {
-    //        scoring = false;
-    //    }
-    //    if (otherColor == blue) {
-    //        if (color_sensor.color() == blue) {
-    //            scoring = false;
-    //        }
-    //    } else if (otherColor == red) {
-    //        if (color_sensor.color() == red) {
-    //            scoring = false;
-    //        }
-    //    }
-    //    wait(20, msec);
-    //}
-
-    wait(1250, msec);
+    while (scoring) {
+        if ((Brain.Timer.system() - startScoreTime) > 3000) {
+            scoring = false;
+        }
+        if (otherColor == blue) {
+            if (color_sensor.color() == blue) {
+                scoring = false;
+            }
+        } else if (otherColor == red) {
+            if (color_sensor.color() == red) {
+                scoring = false;
+            }
+        }
+        wait(5, msec);
+    }
 
     // Stop scoring
-    indexer_piston.set(false);
-    intake.spin(reverse, 100, percent);
-    driveFor(6, 100);
-
-    // Bump
     hood.set(false);
-    setDrivetrainSpeed(-50);
-    wait(500, msec);
+    indexer_piston.set(true);
 
     /*Path three_balls_path = PathGenerator::GeneratePath(
     	{{34.0, -48.0},
@@ -117,44 +129,27 @@ void LeftAuton(void) {
     	 {48.0, -45.5},
          {19.5, -17.0}
     	},
-    	35.0,
+    	45.0,
     	10.0,
     	3,
     	0.7,
     	2.0
     );
 
-    three_balls_path.waypoints[1].onReach = []() {
-        std::cout << "Stop indexer (1)" << std::endl;
-        indexer.stop();
-    };
-
-    three_balls_path.waypoints[2].onReach = []() {
-        std::cout << "Stop indexer (2)" << std::endl;
-        indexer.stop();
-    };
-
     intake.spin(forward, 100, percent);
     FollowPath(three_balls_path, forward, 12.0);
     matchloader.set(true);
+    indexer_piston.set(false);
 
     pointAt(6.5, -6, 100, reverse);
 
     driveFor(-17.5, 100);
     indexer_piston.set(true);
-    wait(1500, msec);
+    wait(600, msec);
     
-    Path final_matchloader_path = PathGenerator::GeneratePath(
-    	{{24.0, -24.0},
-    	 {42.0, -45.0},
-         {64.0, -46.0}
-    	},
-    	60.0,
-    	25.0,
-    	6.0,
-    	0.5,
-    	2.0
-    );
+    left_drive.setStopping(hold);
+    right_drive.setStopping(hold);
 
-    FollowPath(final_matchloader_path, forward, 16.0);
+    driveTo(35, -37, 100, forward);
+    driveTo(11, -37.5, 70, reverse);
 }

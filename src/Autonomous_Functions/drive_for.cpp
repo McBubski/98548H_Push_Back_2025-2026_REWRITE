@@ -18,9 +18,9 @@ void driveFor(double distance, double speed) {
     double turn_ki = 0.01;
     double turn_kd = 0.7;
 
-    double drive_kp = 2.75;
+    double drive_kp = 2.85;
     double drive_ki = 0.075;
-    double drive_kd = 5.0;
+    double drive_kd = 3.5 ;
 
     double acceleration = 0.1;
 

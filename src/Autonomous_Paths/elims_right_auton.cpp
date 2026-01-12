@@ -22,6 +22,8 @@ void ElimsRightAuton(void) {
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
 
+    ResetFieldPositionFromDistanceWithOdometry();
+
     Path three_super_ball_epic_path_supreme = PathGenerator::GeneratePath(
     	{{46.0, 16.0},
     	 {21.5, 26.5},

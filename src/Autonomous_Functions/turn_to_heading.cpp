@@ -7,24 +7,31 @@
 #include <iostream>
 
 void turnToHeading(double heading, double turnSpeed) {
-    std::cout << "Started turning." << std::endl;
+    std::cout << "Started turning from " << inertial_sensor.heading() << "deg to " << heading << "deg (" << WrapAngle(heading - inertial_sensor.heading()) << "deg)" << std::endl;
 
+    // Error info
     double error = WrapAngle(heading - inertial_sensor.heading());
     double startError = error;
     double previousTime = Brain.Timer.system();
 
+    // Timeout time and time spent "finished"
     double timeout = 750 + (std::abs(startError) / 360.0) * 1600; // Base timeout plus extra time for larger turns
+    double settleReachedTime = 0;
 
     std::cout << timeout << std::endl;
 
+    // Bool if PID is running
     bool notDone = true;
 
+    // PID Constants
     double p = 0.35;
     double i = 0.01;
     double d = 0.70;
 
+    // Ramp up
     double acceleration = 1.0;
 
+    // Margins to decide when the turn is done
     double error_margin = 1;
     double angular_velocity_margin = 3;
 
@@ -32,7 +39,42 @@ void turnToHeading(double heading, double turnSpeed) {
 
 
     while (notDone) {
-        // Update Error
+        double currentTime = Brain.Timer.system();
+        double dt = currentTime - previousTime;
+        previousTime = currentTime;
+
+        error = WrapAngle(heading - inertial_sensor.heading());
+
+        if (std::abs(error) <= 5) {
+            turnPid.I = i;
+        } 
+
+        double speed = turnPid.Update(error, dt);
+
+        bool atTarget = (std::abs(error) <= error_margin);
+        bool isSlowed = (std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin);
+
+        if (atTarget && isSlowed) {
+            settleReachedTime += dt;
+        } else {
+            settleReachedTime = 0;
+        }
+
+        if (settleReachedTime > turnPid.SettleTime) {
+            std::cout << "Settled down." << std::endl;
+            notDone = false;
+        }
+
+        if (turnPid.Time > turnPid.Timeout) {
+            std::cout << "Timed out." << std::endl;
+            notDone = false;
+        }
+
+        left_drive.spin(forward, speed, percent);
+        right_drive.spin(reverse, speed, percent);
+
+        wait(10, msec);
+        /*// Update Error
 
         error = WrapAngle(heading - inertial_sensor.heading());
 
@@ -44,7 +86,7 @@ void turnToHeading(double heading, double turnSpeed) {
 
         // Checks if error is small enough and robot is slow enough
         if (std::abs(error) <= error_margin && std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin && turnPid.RanOnce == true && turnPid.HasReachedEnd == false) {
-            notDone = false;
+            //notDone = false;
             turnPid.HasReachedEnd = true;
             turnPid.TimeReachedEnd = turnPid.Time;
 
@@ -65,7 +107,9 @@ void turnToHeading(double heading, double turnSpeed) {
             std::cout << "Timed out." << std::endl;
         }
 
-        if (std::abs(error) <= 25) {
+        // Check this maybeSo
+
+        if (std::abs(error) <= 5) {
             turnPid.I = i;
         }
 
@@ -80,7 +124,7 @@ void turnToHeading(double heading, double turnSpeed) {
 
         wait(10, msec);
 
-        //std::cout << "Error: " << error << std::endl;
+        //std::cout << "Error: " << error << std::endl;**/
     }
 
     //std::cout << "Ended turning." << std::endl;

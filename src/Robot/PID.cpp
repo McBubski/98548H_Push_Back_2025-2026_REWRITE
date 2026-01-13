@@ -11,6 +11,7 @@
 #include "Robot/utility_functions.h"
 
 #include <cmath>
+#include <iostream>
 
 PID::PID(double p, double i, double d, double r, double integral_cap, double speed_cap, double timeout, double settle_time)
 {
@@ -31,8 +32,12 @@ double PID::Update(double error, double dt)
     Time += dt;
     PreviousError = Error;
     Error = error;
-    Integral += error * dt;
     Derivative = Error - PreviousError;
+
+    if (I > 0) {
+        Integral += error * dt;
+        //std::cout << Integral << ", " << Integral * I << std::endl;
+    }
 
     if(std::abs(Integral) * I > IntegralCap)
     {

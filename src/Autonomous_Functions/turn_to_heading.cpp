@@ -12,6 +12,8 @@ void turnToHeading(double heading, double turnSpeed) {
     // Error info
     double error = WrapAngle(heading - inertial_sensor.heading());
     double startError = error;
+
+    // Time info
     double startTime = Brain.Timer.system();
     double previousTime = startTime;
 

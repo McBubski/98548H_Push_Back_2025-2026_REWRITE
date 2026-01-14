@@ -17,7 +17,8 @@ Auton testingAuton = {
 
 
 void TestingAuton(void) {
-    turnToHeading(90, 100);
+    driveFor(24, 100);
+    //turnToHeading(90, 100);
 	/*intake.spin(forward, 100, percent);
     hood.set(true);
 

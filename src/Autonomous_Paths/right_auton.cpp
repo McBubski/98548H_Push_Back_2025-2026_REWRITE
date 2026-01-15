@@ -58,7 +58,7 @@ void RightAuton(void) {
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, 44.5},
-    	 {30.0, 44.0},
+    	 {30.0, 43.0},
     	},
     	50.0,
     	20.0,
@@ -77,10 +77,11 @@ void RightAuton(void) {
 
     FollowPath(goal_path, reverse, 18.0);
 
-    matchloader.set(false);
-    driveFor(-2, 100);
     intake.spin(forward, 100, percent);
     hood.set(true);
+    setDrivetrainSpeed(-50);
+    wait(300, msec);
+    setDrivetrainSpeed(0);
 
     // Color Sort!
 
@@ -117,27 +118,71 @@ void RightAuton(void) {
     std::cout << "sorted" << std::endl;
 
     // Stop scoring
-    driveFor(6, 100);
-    setDrivetrainSpeed(-100);
+    //driveFor(6, 100);
+    //setDrivetrainSpeed(-100);
     hood.set(false);
-    wait(400, msec);
+    //wait(400, msec);
     indexer_piston.set(true);
 
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {9.0, 8.0}
+         {9.0, 6.5}
     	},
-    	30.0,
-    	10.0,
+    	45.0,
+    	15.0,
     	3,
     	0.7,
     	2.0
     );
 
-    intake.stop();
-    intake_low.spin(forward, 100, percent);
+    middle_ball_path.waypoints[16].onReach = []() {
+        std::cout << "reached" << std::endl;
+        intake.stop();
+        intake_low.spin(forward, 100, percent);
+
+        indexer_piston.set(false);
+    };
+
+    matchloader.set(false);
     FollowPath(middle_ball_path, forward, 14.0);
-    intake.spin(reverse, 40, percent);
-    driveFor(4, 100);
+    intake.spin(reverse, 35, percent);
+    driveFor(3.0, 100);
+    wait(500, msec);
+
+    // Wing
+
+    Path reverse_path = PathGenerator::GeneratePath(
+	    {{15.5, 15.0},
+	     {29.0, 25.0},
+	     {34.0, 32.0},
+	     {42.0, 35.0}
+	    },
+	    40.0,
+	    10.0,
+	    3.0,
+	    0.2,
+	    4.0
+    );
+
+    FollowPath(reverse_path, reverse, 14.0);
+
+    //driveFor(-34, 100);
+    //turnToHeading(270, 100);
+
+    Path wing_path = PathGenerator::GeneratePath(
+	    {{37.5, 42.5},
+         {26.0, 39.0},
+         {16.0, 38.0},
+         {3, 33.0}
+	    },
+	    40.0,
+	    5.0,
+	    3.0,
+	    0.4,
+	    2.0
+    );
+
+    FollowPath(wing_path, forward, 18.0);
+    turnToHeading(270, 100);
 }

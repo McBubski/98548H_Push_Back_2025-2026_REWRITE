@@ -137,6 +137,8 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
             lastTriggeredIndex = closestIndex;
         }
 
+        //std::cout << closestIndex << std::endl;
+
         float pixelsPerInch = (200.0 / 144.0);
         float XOnBrainScreen = 337 + (pixelsPerInch * lookaheadPoint.x);
         float YOnbrainScreen = 110 + (-pixelsPerInch * lookaheadPoint.y);

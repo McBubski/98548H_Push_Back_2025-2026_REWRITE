@@ -18,7 +18,7 @@ void turnToHeading(double heading, double turnSpeed) {
     double previousTime = startTime;
 
     // Timeout time and time spent "finished"
-    double timeout = 999999;//750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
+    double timeout = 750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
     double settleReachedTime = 0;
 
     // Bool if PID is running
@@ -27,13 +27,13 @@ void turnToHeading(double heading, double turnSpeed) {
     // PID Constants
     double p = 0.315;//0.35;
     double i = 0;//0.01;
-    double d = 0.3;//0.70;
+    double d = 0.28;//0.3;
 
     // Ramp up
     double acceleration = 1.0;
 
     // Margins to decide when the turn is done
-    double error_margin = 1;
+    double error_margin = 1.5;
     double angular_velocity_margin = 10;
 
     if (std::abs(startError) <= error_margin) {

@@ -43,17 +43,16 @@ void LeftAuton(void) {
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
-    //task rumble = task(forceStop);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Neg, Left);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
-    ResetFieldPositionFromDistanceWithOdometry();
+    //ResetFieldPositionFromDistanceWithOdometry();
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, -25.0},
     	 {48.0, -48.0},
-    	 {63.5, -40.0},
+    	 {64.5, -40.0},
     	},
     	50.0,
     	20.0,
@@ -63,12 +62,12 @@ void LeftAuton(void) {
     );
 
     FollowPath(matchload_path, forward, 14.0);
-    setDrivetrainSpeed(10);
+    //setDrivetrainSpeed(10);
     //wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, -44.5},
-    	 {33.0, -44.5},
+    	{{56.0, -43.5},
+    	 {33.0, -43.5},
     	},
     	50.0,
     	10.0,
@@ -79,10 +78,11 @@ void LeftAuton(void) {
     
     FollowPath(goal_path, reverse, 18.0);
 
-    matchloader.set(false);
-    setDrivetrainSpeed(-10);
     intake.spin(forward, 100, percent);
     hood.set(true);
+    setDrivetrainSpeed(-50);
+    wait(300, msec);
+    setDrivetrainSpeed(0);
 
     // Color Sort!
 
@@ -117,23 +117,11 @@ void LeftAuton(void) {
     }
 
     // Stop scoring
+    matchloader.set(false);
     hood.set(false);
     indexer_piston.set(true);
 
-    /*Path three_balls_path = PathGenerator::GeneratePath(
-    	{{34.0, -48.0},
-    	 {44.0, -48.0},
-    	 {44.0, -20.0},
-         {20, -20}
-    	},
-    	55.0,
-    	20.0,
-    	3.0,
-    	0.4,
-    	3.5
-    );*/
-
-    Path three_balls_path = PathGenerator::GeneratePath(
+    Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, -45.5},
     	 {48.0, -45.5},
          {19.5, -17.0}
@@ -145,20 +133,54 @@ void LeftAuton(void) {
     	2.0
     );
 
+    middle_ball_path.waypoints[13].onReach = []() {
+        matchloader.set(true);
+    };
+
     intake.spin(forward, 100, percent);
-    FollowPath(three_balls_path, forward, 12.0);
-    matchloader.set(true);
+    FollowPath(middle_ball_path, forward, 12.0);
     indexer_piston.set(false);
 
-    pointAt(8.5, -6, 100, reverse);
+    pointAt(7.5, -6, 100, reverse);
 
-    driveFor(-17.5, 100);
+    driveFor(-14.75, 100);
     indexer_piston.set(true);
+    setDrivetrainSpeed(-5);
     wait(600, msec);
     
-    left_drive.setStopping(hold);
-    right_drive.setStopping(hold);
+    // Wing
 
-    driveTo(35, -37, 100, forward);
-    driveTo(11, -37.5, 70, reverse);
+    Path reverse_path = PathGenerator::GeneratePath(
+	    {{15.5, -19.0},
+	     {29.0, -33.0},
+	     {34.0, -41.0},
+	     {42.0, -42.0}
+	    },
+	    40.0,
+	    10.0,
+	    3.0,
+	    0.2,
+	    4.0
+    );
+
+    FollowPath(reverse_path, forward, 14.0);
+
+    //driveFor(-34, 100);
+    //turnToHeading(270, 100);
+
+    Path wing_path = PathGenerator::GeneratePath(
+	    {{37.5, -48.5},
+         {26.0, -45.5},
+         {18.0, -44.5},
+         {9, -37}
+	    },
+	    40.0,
+	    5.0,
+	    3.0,
+	    0.4,
+	    2.0
+    );
+
+    FollowPath(wing_path, reverse, 18.0);
+    turnToHeading(90, 100);
 }

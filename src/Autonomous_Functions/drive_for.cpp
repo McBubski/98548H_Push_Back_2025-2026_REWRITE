@@ -23,7 +23,7 @@ void driveFor(double distance, double speed) {
     double previousTime = startTime;
 
     // Timeout time and time spent "finished"
-    double timeout = 999999;//(std::abs(distance) / 12) * 750 + 500;
+    double timeout = (std::abs(distance) / 12) * 750 + 500;
     double settleReachedTime = 0;
 
     // Driving bool

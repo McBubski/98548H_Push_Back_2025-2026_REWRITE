@@ -168,7 +168,7 @@ void SoloAWPAuton(void) {
     	{{16, -16},
          {35.0, -33.5},
     	 {48.0, -59.5},
-    	 {72.0, -46.0}
+    	 {72.0, -43.0}
     	},
     	80.0,
     	20.0,
@@ -188,7 +188,7 @@ void SoloAWPAuton(void) {
 
     Path goal_path1 = PathGenerator::GeneratePath(
     	{{56.0, -44.5},
-    	 {32.5, -54.0},
+    	 {32.5, -51.0},
     	},
     	50.0,
     	10.0,

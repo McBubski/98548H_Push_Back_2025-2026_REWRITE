@@ -18,16 +18,16 @@ void turnToHeading(double heading, double turnSpeed) {
     double previousTime = startTime;
 
     // Timeout time and time spent "finished"
-    double timeout = 750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
+    double timeout = 750 + (std::abs(startError) / 360.0) * 1200; // Base timeout plus extra time for larger turns
     double settleReachedTime = 0;
 
     // Bool if PID is running
     bool notDone = true;
 
     // PID Constants
-    double p = 0.315;//0.35;
+    double p = 0.325;//0.35;
     double i = 0;//0.01;
-    double d = 0.28;//0.3;
+    double d = 0.19;//0.28;
 
     // Ramp up
     double acceleration = 1.0;
@@ -60,11 +60,12 @@ void turnToHeading(double heading, double turnSpeed) {
         if (std::abs(error) > error_margin) {
             if (std::abs(speed) < minSpeed) {
                 speed = minSpeed * Sign(error);
+                //std::cout << "min speed" << std::endl;
             }
         }
 
         bool atTarget = (std::abs(error) <= error_margin);
-        bool isSlowed = (std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin);
+        bool isSlowed = true;//(std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin);
 
         if (atTarget && isSlowed) {
             settleReachedTime += dt;

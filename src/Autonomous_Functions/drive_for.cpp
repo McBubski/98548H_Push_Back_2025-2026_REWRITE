@@ -97,6 +97,12 @@ void driveFor(double distance, double speed) {
             driving = false;
         }
 
+        if ((left_drive.current(percent) >= 98.0 || right_drive.current(percent) >= 98.0) && drivePID.Time >= drivePID.Timeout / 2) {
+            driving = false;
+            std::cout << "Stall!" << std::endl;
+        }
+
+
         left_drive.spin(forward, driveSpeed + turnSpeed, percent);
         right_drive.spin(forward, driveSpeed - turnSpeed, percent);
 

@@ -127,7 +127,7 @@ void RightAuton(void) {
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {9.0, 6.5}
+         {10.0, 5.5}
     	},
     	45.0,
     	15.0,
@@ -146,8 +146,8 @@ void RightAuton(void) {
 
     matchloader.set(false);
     FollowPath(middle_ball_path, forward, 14.0);
-    intake.spin(reverse, 35, percent);
-    driveFor(3.0, 100);
+    intake.spin(reverse, 55, percent);
+    driveFor(1.0, 100);
     wait(500, msec);
 
     // Wing

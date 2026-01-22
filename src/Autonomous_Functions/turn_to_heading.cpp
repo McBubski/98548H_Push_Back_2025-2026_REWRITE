@@ -25,15 +25,15 @@ void turnToHeading(double heading, double turnSpeed) {
     bool notDone = true;
 
     // PID Constants
-    double p = 0.325;//0.35;
+    double p = 0.34;//0.325;
     double i = 0;//0.01;
-    double d = 0.19;//0.28;
+    double d = 0.10;//0.19;//0.15;//0.19;
 
     // Ramp up
     double acceleration = 1.0;
 
     // Margins to decide when the turn is done
-    double error_margin = 1.5;
+    double error_margin = 1.0;
     double angular_velocity_margin = 10;
 
     if (std::abs(startError) <= error_margin) {
@@ -49,13 +49,13 @@ void turnToHeading(double heading, double turnSpeed) {
 
         error = WrapAngle(heading - inertial_sensor.heading());
 
-        if (std::abs(error) <= 3) {
+        if (std::abs(error) <= 5) {
             turnPid.I = i;
         } 
 
         double speed = turnPid.Update(error, dt);
 
-        double minSpeed = 5; // minimum motor spin
+        double minSpeed = 3; // minimum motor spin
 
         if (std::abs(error) > error_margin) {
             if (std::abs(speed) < minSpeed) {
@@ -73,17 +73,19 @@ void turnToHeading(double heading, double turnSpeed) {
             settleReachedTime = 0;
         }
 
-        if (settleReachedTime > turnPid.SettleTime) {
+        if (settleReachedTime >= turnPid.SettleTime) {
             std::cout << "\nSettled down." << std::endl;
             notDone = false;
         }
 
-        if (turnPid.Time > turnPid.Timeout) {
+        if (turnPid.Time >= turnPid.Timeout) {
             std::cout << "\nTimed out." << std::endl;
             notDone = false;
         }
 
         // Spin Wheels
+
+        //std::cout << speed << std::endl;
 
         left_drive.spin(forward, speed, percent);
         right_drive.spin(reverse, speed, percent);

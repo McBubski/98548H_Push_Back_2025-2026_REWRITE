@@ -60,8 +60,8 @@ void SoloAWPAuton(void) {
     FollowPath(matchload_path, forward, 12.0);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 44.5},
-    	 {29.5, 44.0},
+    	{{56.0, 44.0},
+    	 {29.5, 43.0},
     	},
     	50.0,
     	20.0,
@@ -151,9 +151,9 @@ void SoloAWPAuton(void) {
     //wait(300, msec);
 
     // Middle goal
-    pointAt(1.0, -3.5, 100, reverse);
+    pointAt(0.0, -4.5, 100, reverse);
 
-    driveFor(-17.5, 100);
+    driveFor(-17.0, 100);
     indexer_piston.set(true);
     hood.set(true);
     intake.spin(forward, 70, percent);
@@ -187,8 +187,8 @@ void SoloAWPAuton(void) {
     //wait(450, msec);
 
     Path goal_path1 = PathGenerator::GeneratePath(
-    	{{56.0, -44.5},
-    	 {32.5, -51.0},
+    	{{56.0, -49.5},
+    	 {32.5, -52.5},
     	},
     	50.0,
     	10.0,

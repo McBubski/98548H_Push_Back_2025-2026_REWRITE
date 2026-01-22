@@ -67,7 +67,7 @@ void LeftAuton(void) {
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, -43.5},
-    	 {33.0, -43.5},
+    	 {33.0, -43.75},
     	},
     	50.0,
     	10.0,
@@ -144,6 +144,7 @@ void LeftAuton(void) {
     pointAt(7.5, -6, 100, reverse);
 
     driveFor(-14.75, 100);
+    hood.set(true);
     indexer_piston.set(true);
     setDrivetrainSpeed(-5);
     wait(600, msec);
@@ -181,6 +182,7 @@ void LeftAuton(void) {
 	    2.0
     );
 
+    hood.set(false);
     FollowPath(wing_path, reverse, 18.0);
     turnToHeading(90, 100);
 }

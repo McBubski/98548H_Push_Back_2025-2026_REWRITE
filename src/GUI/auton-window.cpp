@@ -5,7 +5,7 @@
 
 // Grid information
 
-int rows = 4;
+int rows = 5;
 int columns = 2;
 
 int padding = 10;

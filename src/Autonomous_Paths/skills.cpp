@@ -58,7 +58,7 @@ void Skills(void) {
     	{{57.5, 48.0},
     	 {50.0, 56.0},
     	 {38.5, 56.0},
-    	 {-24, 56.0},
+    	 {-30, 56.0},
          {-40, 36.5}
     	},
     	45.0,
@@ -80,11 +80,11 @@ void Skills(void) {
     };
     
     wing.set(true);
-    FollowPath(first_long_goal_path, reverse, 20.0);
+    FollowPath(first_long_goal_path, reverse, 18.0);
 
     
-    //pointAt(-23, 47.5, 100, reverse);
-    driveTo(-23, 42.5, 70, reverse);
+    //pointAt(-23, 42.0, 100, reverse);
+    driveTo(-23, 41.0, 60, reverse);
 
 
     //setDrivetrainSpeed(-20);
@@ -128,7 +128,7 @@ void Skills(void) {
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{-58.0, 44.5},
-	     {-25.5, 46.0}
+	     {-26.5, 47.0}
 	    },
 	    50.0,
 	    20.0,
@@ -138,13 +138,13 @@ void Skills(void) {
     );
 
     FollowPath(first_long_goal_second_time_path, reverse, 18.0);
-    driveFor(-2, 100);
-    //setDrivetrainSpeed(-20);
+    setDrivetrainSpeed(-20);
 
     hood.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     wait(300, msec);
+    setDrivetrainSpeed(0);
     // Reset position rq
     positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
@@ -174,7 +174,7 @@ void Skills(void) {
 
     matchloader.set(false);
     FollowPath(clear_first_park_zone_path, forward, 16.0);
-    turnToHeading(186, 100);
+    turnToHeading(183, 100);
     //driveFor(3, 100);
 
     // Clear zone
@@ -265,7 +265,7 @@ void Skills(void) {
     	 {-50.0, -57.0},
     	 {-38.5, -57.0},
     	 {24, -57.0},
-         {44, -34.5}
+         {44, -35.0} // -34.5
     	},
     	45.0,
     	25.0,
@@ -328,7 +328,7 @@ void Skills(void) {
 
     Path second_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{58.0, -46.0},
-	     {26.0, -46.0}
+	     {25.0, -45.5}
 	    },
 	    50.0,
 	    20.0,
@@ -338,12 +338,13 @@ void Skills(void) {
     );
 
     FollowPath(second_long_goal_second_time_path, reverse, 18.0);
-    driveFor(-2, 100);
+    setDrivetrainSpeed(-20);
 
     hood.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     wait(300, msec);
+    setDrivetrainSpeed(0);
     // Reset position rq
     positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());

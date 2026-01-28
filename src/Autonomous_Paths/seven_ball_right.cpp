@@ -12,14 +12,14 @@ void SevenBallRightAuton(void);
 Auton sevenBallRightAuton = {
     "7-Ball Right",
     "Gets lots of points!",
-    50.0, 14.5, 288.0,
+    50.0, 14.5, 288.5,
     SevenBallRightAuton
 };
 
 void SevenBallRightAuton(void) {
     Path three_balls_path = PathGenerator::GeneratePath(
     	{{40.0, 17.50},
-    	 {22.0, 24.0},
+    	 {19.0, 21.0},
     	},
     	50.0,
     	15.0,
@@ -28,7 +28,7 @@ void SevenBallRightAuton(void) {
     	3.0
     );
 
-    three_balls_path.waypoints[2].onReach = []() {
+    three_balls_path.waypoints[3].onReach = []() {
         matchloader.set(true);
     };
 
@@ -43,7 +43,7 @@ void SevenBallRightAuton(void) {
     	 {43.0, 42.5},
     	 {65.5, 44.5}
     	},
-    	60.0,
+    	55.0,
     	15.0,
     	3.0,
     	0.55,
@@ -60,8 +60,8 @@ void SevenBallRightAuton(void) {
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 48.5},
-    	 {34.0, 46.5},
+    	{{56.0, 47.5},
+    	 {32.0, 46.5},
     	},
     	50.0,
     	20.0,

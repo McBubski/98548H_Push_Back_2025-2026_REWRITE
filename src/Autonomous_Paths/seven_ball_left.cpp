@@ -40,10 +40,10 @@ void SevenBallLeftAuton(void) {
 
     Path matchloader_path = PathGenerator::GeneratePath(
     	{{34.0, -35.0},
-    	 {43.0, -42.5},
-    	 {65.5, -45.5}
+    	 {43.0, -44.5},
+    	 {67.0, -47.0}
     	},
-    	60.0,
+    	50.0,
     	15.0,
     	3.0,
     	0.55,
@@ -61,7 +61,7 @@ void SevenBallLeftAuton(void) {
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, -47.5},
-    	 {34.0, -46.0},
+    	 {34.0, -48.5},
     	},
     	50.0,
     	20.0,

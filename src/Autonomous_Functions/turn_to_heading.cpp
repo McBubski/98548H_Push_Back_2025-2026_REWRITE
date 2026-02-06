@@ -25,9 +25,9 @@ void turnToHeading(double heading, double turnSpeed) {
     bool notDone = true;
 
     // PID Constants
-    double p = 0.34;//0.325;
+    double p = 0.34;//0.34;//0.325;
     double i = 0;//0.01;
-    double d = 0.13;//0.19;//0.15;//0.19;
+    double d = 0.19;//0.13;//0.19;//0.15;//0.19;
 
     // Ramp up
     double acceleration = 1.0;
@@ -55,7 +55,7 @@ void turnToHeading(double heading, double turnSpeed) {
 
         double speed = turnPid.Update(error, dt);
 
-        double minSpeed = 4; // minimum motor spin
+        double minSpeed = 3; // minimum motor spin
 
         if (std::abs(error) > error_margin) {
             if (std::abs(speed) < minSpeed) {

@@ -141,7 +141,7 @@ void LeftAuton(void) {
     FollowPath(middle_ball_path, forward, 12.0);
     indexer_piston.set(false);
 
-    pointAt(7.5, -6, 100, reverse);
+    pointAt(7.5, -5.5, 100, reverse);
 
     driveFor(-14.75, 100);
     hood.set(true);

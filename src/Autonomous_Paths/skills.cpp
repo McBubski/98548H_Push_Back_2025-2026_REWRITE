@@ -28,7 +28,7 @@ void Skills(void) {
     // Curve to the first matchloader
 
     std::vector<double> positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
-    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
@@ -50,7 +50,7 @@ void Skills(void) {
 
     FollowPath(matchload_path, forward, 12.0);
     setDrivetrainSpeed(5);
-    wait(1200, msec);
+    wait(1400, msec);
 
     // DONT TOUCH
 
@@ -83,8 +83,8 @@ void Skills(void) {
     FollowPath(first_long_goal_path, reverse, 18.0);
 
     
-    //pointAt(-23, 42.0, 100, reverse);
-    driveTo(-23, 41.0, 60, reverse);
+    pointAt(-23, 39.0, 100, reverse);
+    driveTo(-23, 39.0, 60, reverse);
 
 
     //setDrivetrainSpeed(-20);
@@ -106,8 +106,8 @@ void Skills(void) {
     // Drive into farside matchloader
 
     Path second_matchloader_path = PathGenerator::GeneratePath(
-	    {{-36.0, 45.0},
-	     {-62.0, 44.5}
+	    {{-36.0, 44.5},
+	     {-62.0, 44.0}
 	    },
 	    50.0,
 	    20.0,
@@ -128,7 +128,7 @@ void Skills(void) {
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{-58.0, 44.5},
-	     {-26.5, 47.0}
+	     {-26.5, 46.5}
 	    },
 	    50.0,
 	    20.0,
@@ -254,7 +254,7 @@ void Skills(void) {
 
     FollowPath(third_matchloader_path, forward, 18.0);*/
 
-    driveTo(-62.0, -46.0, 80, forward);
+    driveTo(-62.0, -44.0, 80, forward);
 
     setDrivetrainSpeed(10);
 
@@ -265,7 +265,7 @@ void Skills(void) {
     	 {-50.0, -57.0},
     	 {-38.5, -57.0},
     	 {24, -57.0},
-         {44, -35.0} // -34.5
+         {44, -33.0} // -34.5
     	},
     	45.0,
     	25.0,
@@ -289,7 +289,7 @@ void Skills(void) {
     FollowPath(first_second_long_goal_path, reverse, 20.0);
 
     // Goal close to you left side
-    driveTo(23, -41.5, 70, reverse);
+    driveTo(23, -40.25, 70, reverse);
 
     driveFor(-2, 100);
     hood.set(true);
@@ -328,7 +328,7 @@ void Skills(void) {
 
     Path second_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{58.0, -46.0},
-	     {25.0, -45.5}
+	     {26.0, -45.5}
 	    },
 	    50.0,
 	    20.0,

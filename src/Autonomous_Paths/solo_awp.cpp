@@ -47,8 +47,8 @@ void SoloAWPAuton(void) {
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {48.0, 46.0},
-    	 {65.0, 39.5},
+    	 {48.0, 45.0},
+    	 {65.5, 38.0},
     	},
     	50.0,
     	20.0,
@@ -60,8 +60,8 @@ void SoloAWPAuton(void) {
     FollowPath(matchload_path, forward, 12.0);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 44.0},
-    	 {29.5, 43.0},
+    	{{56.0, 43.0},
+    	 {29.5, 41.0},
     	},
     	50.0,
     	20.0,
@@ -115,7 +115,7 @@ void SoloAWPAuton(void) {
 	    {{32.5, 48.0},
 	     {27.0, 38.0},
 	     {22.0, 33.5},
-	     {22.0, -35.0}
+	     {22.0, -36.0}
 	    },
 	    60.0,
 	    25.0,
@@ -151,11 +151,14 @@ void SoloAWPAuton(void) {
     //wait(300, msec);
 
     // Middle goal
-    pointAt(0.0, -4.5, 100, reverse);
+    pointAt(0.0, -8.0, 80, reverse);
+    //pointAt(0.0, -5.5, 100, reverse);
 
-    driveFor(-17.0, 100);
+    driveFor(-15.5, 100);
+    intake.spin(reverse, 100, percent);
+    wait(150, msec);
     indexer_piston.set(true);
-    hood.set(true);
+    //hood.set(true);
     intake.spin(forward, 70, percent);
     wait(600, msec);
 
@@ -166,9 +169,9 @@ void SoloAWPAuton(void) {
 
     Path matchload_path_2 = PathGenerator::GeneratePath(
     	{{16, -16},
-         {35.0, -33.5},
-    	 {48.0, -59.5},
-    	 {72.0, -43.0}
+         {35.0, -35.5},
+    	 {48.0, -60.5},
+    	 {72.0, -47.0}
     	},
     	80.0,
     	20.0,
@@ -187,8 +190,8 @@ void SoloAWPAuton(void) {
     //wait(450, msec);
 
     Path goal_path1 = PathGenerator::GeneratePath(
-    	{{56.0, -49.5},
-    	 {32.5, -52.5},
+    	{{56.0, -50.5},
+    	 {32.5, -54.0},
     	},
     	50.0,
     	10.0,

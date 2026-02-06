@@ -1,5 +1,6 @@
 #include "DriverControl/driver_control.h"
 #include "DriverControl/driver_control_functions.h"
+#include "Autonomous/autonomous_definitions.h"
 #include "Robot/color_sorting.h"
 #include "Robot/distance_calibration.h"
 #include "vex.h"
@@ -93,7 +94,13 @@ void drivercontrol(void) {
             if (!colorSortingIndexerOverride) {
                 indexer.spin(reverse, 100, percent);
             }
-            intake.spin(forward, 100, percent);
+
+            if (auton_path == 6) {
+                intake.spin(forward, 50, percent);
+            } else {
+                intake.spin(forward, 100, percent);
+            }
+            
         } else {
             // Resets torque stall variables
 

@@ -44,8 +44,6 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
         int closestIndex = FindClosestPoint(path, lastClosestIndex);
         lastClosestIndex = closestIndex;
 
-        std::cout << closestIndex << std::endl;
-
         // Step Two - Find the lookahead point
         auto[lookaheadPoint, fractionalIndex] = FindLookaheadPoint(path, lastLookaheadIndex, lookaheadDistance);
         lastLookaheadIndex = fractionalIndex;

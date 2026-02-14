@@ -30,9 +30,9 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
     double timeout = std::max(1000.0, (std::floor(pathLength) * 90.0));
     double startTime = Brain.Timer.system();
 
-    double kA = 0.05;//0.02;
+    double kA = 0.02;//0.05;
     double kV = 1.0;//1.0;
-    double kP = 0.4;//0.02;
+    double kP = 0.02;//0.4;
 
     while (driving) {
         // Calculate deltaTime

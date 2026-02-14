@@ -144,7 +144,10 @@ void LeftAuton(void) {
     pointAt(7.5, -5.5, 100, reverse);
 
     driveFor(-14.75, 100);
-    hood.set(true);
+    //hood.set(true);
+    intake.spin(reverse, 100, percent);
+    wait(150,msec);
+    intake.spin(forward, 100, percent);
     indexer_piston.set(true);
     setDrivetrainSpeed(-5);
     wait(600, msec);
@@ -184,5 +187,5 @@ void LeftAuton(void) {
 
     hood.set(false);
     FollowPath(wing_path, reverse, 18.0);
-    turnToHeading(90, 100);
+    turnToHeading(120, 100);
 }

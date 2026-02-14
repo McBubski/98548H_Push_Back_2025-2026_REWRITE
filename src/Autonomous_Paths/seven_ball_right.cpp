@@ -41,7 +41,7 @@ void SevenBallRightAuton(void) {
     Path matchloader_path = PathGenerator::GeneratePath(
     	{{34.0, 35.0},
     	 {43.0, 42.5},
-    	 {65.5, 44.5}
+    	 {67.0, 44.5}
     	},
     	55.0,
     	15.0,
@@ -61,7 +61,7 @@ void SevenBallRightAuton(void) {
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, 47.5},
-    	 {32.0, 46.5},
+    	 {33.5, 46.5},
     	},
     	50.0,
     	20.0,
@@ -77,7 +77,37 @@ void SevenBallRightAuton(void) {
     wait(200, msec);
     setDrivetrainSpeed(0);
 
-    wait(1500, msec);
+    // Color Sort!
+
+    color_sort_mode allianceColor = colorSortMode;
+    color otherColor;
+
+    if (allianceColor == RED) {
+        otherColor = color::blue;
+    } else {
+        otherColor = color::red;
+    }
+
+    int startScoreTime = Brain.Timer.system();
+    bool scoring = true;
+
+    while (scoring) {
+        if ((Brain.Timer.system() - startScoreTime) > 1500) {
+            scoring = false;
+        }
+        if (otherColor == blue) {
+            if (color_sensor.color() == blue) {
+                scoring = false;
+            }
+        } else if (otherColor == red) {
+            if (color_sensor.color() == red) {
+                scoring = false;
+            }
+        }
+        wait(5, msec);
+    }
+
+    intake.spin(reverse, 100, percent);
     driveFor(2, 100);
     hood.set(false);
     setDrivetrainSpeed(-20);

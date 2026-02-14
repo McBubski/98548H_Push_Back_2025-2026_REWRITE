@@ -107,7 +107,7 @@ void Skills(void) {
 
     Path second_matchloader_path = PathGenerator::GeneratePath(
 	    {{-36.0, 44.5},
-	     {-62.0, 44.0}
+	     {-62.0, 45.0}
 	    },
 	    50.0,
 	    20.0,
@@ -289,7 +289,7 @@ void Skills(void) {
     FollowPath(first_second_long_goal_path, reverse, 20.0);
 
     // Goal close to you left side
-    driveTo(23, -40.25, 70, reverse);
+    driveTo(23, -38.5, 70, reverse);
 
     driveFor(-2, 100);
     hood.set(true);
@@ -328,7 +328,7 @@ void Skills(void) {
 
     Path second_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{58.0, -46.0},
-	     {26.0, -45.5}
+	     {26.0, -45.0}
 	    },
 	    50.0,
 	    20.0,
@@ -363,7 +363,7 @@ void Skills(void) {
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
     	 {54.0, -26.0},
-    	 {61.5 , -13.0}
+    	 {61.5 , -14.0}
     	},
     	50.0,
     	25.0,

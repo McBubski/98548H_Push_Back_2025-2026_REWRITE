@@ -14,18 +14,18 @@
 
 // Index and array of selected auton path
 
-int auton_path = 6;
+int auton_path = 8;
 
 Auton* autons[] = {
-    &leftAuton,
-    &rightAuton,
-    &elimsLeftAuton,
-    &elimsRightAuton,
-    &sevenBallLeftAuton,
-    &sevenBallRightAuton,
-    &skillsAuton,
-    &soloAWPAuton,
-    &testingAuton
+    &leftAuton,             // 0
+    &rightAuton,            // 1
+    &elimsLeftAuton,        // 2
+    &elimsRightAuton,       // 3
+    &sevenBallLeftAuton,    // 4
+    &sevenBallRightAuton,   // 5
+    &skillsAuton,           // 6
+    &soloAWPAuton,          // 7
+    &testingAuton           // 8
 };
 
 int num_autons = sizeof(autons) / sizeof(autons[0]);

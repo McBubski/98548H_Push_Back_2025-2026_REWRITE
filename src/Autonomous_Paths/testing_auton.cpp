@@ -17,7 +17,21 @@ Auton testingAuton = {
 
 
 void TestingAuton(void) {
-    driveFor(2, 100);
+    Path path_1 = PathGenerator::GeneratePath(
+	    {{0, 6.0},
+	     {0, 32.0},
+	     {18, 32.0},
+	     {18, 0.0}
+	    },
+	    60.0,
+	    35.0,
+	    4.0,
+	    0.3,
+	    4.0
+    );
+    FollowPath(path_1, forward, 14.0);
+
+    //driveFor(2, 100);
     //turnToHeading(90, 100);
 	/*intake.spin(forward, 100, percent);
     hood.set(true);

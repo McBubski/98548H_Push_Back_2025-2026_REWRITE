@@ -30,9 +30,9 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
     double timeout = std::max(1000.0, (std::floor(pathLength) * 90.0));
     double startTime = Brain.Timer.system();
 
-    double kA = 0.02;//0.02;
+    double kA = 0.05;//0.02;
     double kV = 1.0;//1.0;
-    double kP = 0.02;//0.02;
+    double kP = 0.4;//0.02;
 
     while (driving) {
         // Calculate deltaTime
@@ -103,9 +103,9 @@ void FollowPath(Path& path, vex::directionType direction, double lookaheadDistan
         Waypoint lastPoint = path.waypoints[path.size() - 1];
         double distanceToEnd = GetDistance(position_tracking.GlobalXPos, position_tracking.GlobalYPos, lastPoint.x, lastPoint.y);
 
-        // Gotta be close to last point, and within 2 inches
+        // I changed this on Feb 14. Please undo if broken.
 
-        if (closestIndex >= path.size() - 2 && distanceToEnd <= 4.0) {
+        if (closestIndex >= (path.size() - 2) && distanceToEnd <= 4.0) {
             left_drive.stop(coast);
             right_drive.stop(coast);
 
@@ -201,8 +201,17 @@ std::pair<Waypoint, double> FindLookaheadPoint(const Path& path, int lastLookahe
                 lookaheadPoint = InterpolateSegment(start, end, t);
                 fractionalIndex = candidateIndex;
                 intersectionFound = true;
-                return std::make_pair(lookaheadPoint, fractionalIndex);
+                
             }
+        }
+    }
+
+    if (!intersectionFound) {
+        Waypoint lastPoint = path.waypoints[path.size() - 1];
+        double distToEnd = GetDistance(position_tracking.GlobalXPos, position_tracking.GlobalYPos, lastPoint.x, lastPoint.y);
+
+        if (lookaheadDistance > distToEnd) {
+            return std::make_pair(lastPoint, (double)(path.size() - 1));
         }
     }
 

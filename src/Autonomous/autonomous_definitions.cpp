@@ -14,7 +14,7 @@
 
 // Index and array of selected auton path
 
-int auton_path = 8;
+int auton_path = 7;
 
 Auton* autons[] = {
     &leftAuton,             // 0

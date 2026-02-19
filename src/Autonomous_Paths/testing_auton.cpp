@@ -15,57 +15,35 @@ Auton testingAuton = {
     TestingAuton
 };
 
+bool oscillating = false;
+int wiggleOutput = 0;
+
+void oscillate (void) {
+    int startTime = Brain.Timer.system();
+    while (Brain.Timer.system() - startTime < 500) {
+        wiggleOutput = sin(Brain.Timer.system() / 100.0) * 20;
+        left_drive.spin(forward, wiggleOutput, percent);
+        right_drive.spin(forward, -wiggleOutput, percent);
+    }
+}
 
 void TestingAuton(void) {
-    Path path_1 = PathGenerator::GeneratePath(
-	    {{0, 6.0},
-	     {0, 32.0},
-	     {18, 32.0},
-	     {18, 0.0}
-	    },
-	    60.0,
-	    35.0,
-	    4.0,
-	    0.3,
-	    4.0
-    );
-    FollowPath(path_1, forward, 14.0);
+    intake.spin(forward, 100, percent);
 
-    //driveFor(2, 100);
-    //turnToHeading(90, 100);
-	/*intake.spin(forward, 100, percent);
-    hood.set(true);
-
-    color_sort_mode allianceColor = colorSortMode;
-    color otherColor;
-
-    if (allianceColor == RED) {
-        otherColor = color::blue;
-    } else {
-        otherColor = color::red;
-    }
-
-    // Wait until we see blue, or theres a timeout
-    int startScoreTime = Brain.Timer.system();
-    bool scoring = true;
-
-
-    while (scoring) {
-        if ((Brain.Timer.system() - startScoreTime) > 3000) {
-            scoring = false;
-        }
-        if (otherColor == blue) {
-            if (color_sensor.color() == blue) {
-                scoring = false;
-            }
-        } else if (otherColor == red) {
-            if (color_sensor.color() == red) {
-                scoring = false;
-            }
-        }
-        wait(5, msec);
-    }
-
-    intake.spin(reverse, 100, percent);
-    hood.set(false);*/
+    tracking_wheel_piston.set(true);
+    setDrivetrainSpeed(80);
+    wait(350, msec);
+    turnToHeading(45, 100);
+    setDrivetrainSpeed(25);
+    wait(2500, msec);
+    setDrivetrainSpeed(0);
+    /*driveFor(2, 80);
+    oscillate();
+    driveFor(-3, 100);
+    driveFor(6, 70);
+    oscillate();
+    driveFor(-6, 100);
+    driveFor(6, 100);
+    oscillate();
+    driveFor(-24, 100);*/
 }

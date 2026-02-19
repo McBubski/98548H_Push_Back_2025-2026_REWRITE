@@ -83,7 +83,7 @@ void Skills(void) {
     FollowPath(first_long_goal_path, reverse, 18.0);
 
     
-    pointAt(-23, 39.0, 100, reverse);
+    pointAt(-23, 41.0, 100, reverse);
     driveTo(-23, 39.0, 60, reverse);
 
 
@@ -128,7 +128,7 @@ void Skills(void) {
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{-58.0, 44.5},
-	     {-26.5, 46.5}
+	     {-25.5, 46.5}
 	    },
 	    50.0,
 	    20.0,
@@ -265,7 +265,7 @@ void Skills(void) {
     	 {-50.0, -57.0},
     	 {-38.5, -57.0},
     	 {24, -57.0},
-         {44, -33.0} // -34.5
+         {44, -35.0} // -34.5
     	},
     	45.0,
     	25.0,
@@ -289,7 +289,7 @@ void Skills(void) {
     FollowPath(first_second_long_goal_path, reverse, 20.0);
 
     // Goal close to you left side
-    driveTo(23, -38.5, 70, reverse);
+    driveTo(23, -40.5, 70, reverse);
 
     driveFor(-2, 100);
     hood.set(true);
@@ -363,7 +363,7 @@ void Skills(void) {
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
     	 {54.0, -26.0},
-    	 {61.5 , -14.0}
+    	 {61.5 , -13.5}
     	},
     	50.0,
     	25.0,
@@ -397,6 +397,10 @@ void Skills(void) {
             driveOutput = 40;
         } else if (driveOutput < 40) {
             driveOutput = -40;
+        }
+
+        if (error <= 12) {
+            matchloader.set(false);
         }
 
         left_drive.spin(forward, error * 3, percent);

@@ -50,7 +50,7 @@ void Skills(void) {
 
     FollowPath(matchload_path, forward, 12.0);
     setDrivetrainSpeed(5);
-    wait(1400, msec);
+    wait(1200, msec);
 
     // DONT TOUCH
 
@@ -83,8 +83,8 @@ void Skills(void) {
     FollowPath(first_long_goal_path, reverse, 18.0);
 
     
-    pointAt(-23, 41.0, 100, reverse);
-    driveTo(-23, 39.0, 60, reverse);
+    pointAt(-21, 42.0, 100, reverse);
+    driveTo(-21, 41.0, 60, reverse);
 
 
     //setDrivetrainSpeed(-20);
@@ -124,7 +124,7 @@ void Skills(void) {
     FollowPath(second_matchloader_path, forward, 18.0);
     setDrivetrainSpeed(10);
 
-    wait(2000, msec);
+    wait(1750, msec);
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{-58.0, 44.5},
@@ -138,7 +138,7 @@ void Skills(void) {
     );
 
     FollowPath(first_long_goal_second_time_path, reverse, 18.0);
-    setDrivetrainSpeed(-20);
+    setDrivetrainSpeed(-30);
 
     hood.set(true);
     intake.spin(forward, 100, percent);
@@ -328,7 +328,7 @@ void Skills(void) {
 
     Path second_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{58.0, -46.0},
-	     {26.0, -45.0}
+	     {27.0, -45.0}
 	    },
 	    50.0,
 	    20.0,
@@ -338,7 +338,7 @@ void Skills(void) {
     );
 
     FollowPath(second_long_goal_second_time_path, reverse, 18.0);
-    setDrivetrainSpeed(-20);
+    setDrivetrainSpeed(-30);
 
     hood.set(true);
     intake.spin(forward, 100, percent);
@@ -362,8 +362,8 @@ void Skills(void) {
 
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
-    	 {54.0, -26.0},
-    	 {61.5 , -13.5}
+    	 {52.0, -24.0},
+    	 {61.5 , -12.5}
     	},
     	50.0,
     	25.0,
@@ -378,11 +378,11 @@ void Skills(void) {
     //driveFor(3, 100);
 
     // Clear zone
-    matchloader.set(true);
+    setDrivetrainSpeed(50);
     intake.spin(reverse, 100, percent);
     tracking_wheel_piston.set(true);
-    wait(200, msec);
-    setDrivetrainSpeed(50);
+    wait(75, msec);
+    matchloader.set(true);
 
     startTime = Brain.Timer.system();
 
@@ -399,7 +399,7 @@ void Skills(void) {
             driveOutput = -40;
         }
 
-        if (error <= 12) {
+        if (error <= 6) {
             matchloader.set(false);
         }
 

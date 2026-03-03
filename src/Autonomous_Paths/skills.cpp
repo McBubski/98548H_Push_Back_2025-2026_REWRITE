@@ -83,8 +83,8 @@ void Skills(void) {
     FollowPath(first_long_goal_path, reverse, 18.0);
 
     
-    pointAt(-21, 42.0, 100, reverse);
-    driveTo(-21, 41.0, 60, reverse);
+    pointAt(-21, 41.0, 100, reverse);
+    driveTo(-21, 40.0, 60, reverse);
 
 
     //setDrivetrainSpeed(-20);
@@ -149,7 +149,7 @@ void Skills(void) {
     positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
-    wait(2500, msec);
+    wait(2750, msec);
 
     // Push in deeper
     driveFor(3, 100);
@@ -163,7 +163,7 @@ void Skills(void) {
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-36.0, 46.0},
     	 {-54.0, 30.0},
-    	 {-62.0, 12.5}
+    	 {-62.0, 15.0}
     	},
     	50.0,
     	25.0,
@@ -178,10 +178,10 @@ void Skills(void) {
     //driveFor(3, 100);
 
     // Clear zone
-    matchloader.set(true);
     tracking_wheel_piston.set(true);
     wait(200, msec);
     setDrivetrainSpeed(35);
+    matchloader.set(true);
 
     int startTime = Brain.Timer.system();
     bool clearing = true;
@@ -265,7 +265,7 @@ void Skills(void) {
     	 {-50.0, -57.0},
     	 {-38.5, -57.0},
     	 {24, -57.0},
-         {44, -35.0} // -34.5
+         {44, -33.5} // -34.5
     	},
     	45.0,
     	25.0,
@@ -289,7 +289,7 @@ void Skills(void) {
     FollowPath(first_second_long_goal_path, reverse, 20.0);
 
     // Goal close to you left side
-    driveTo(23, -40.5, 70, reverse);
+    driveTo(23, -39.5, 70, reverse);
 
     driveFor(-2, 100);
     hood.set(true);
@@ -327,8 +327,8 @@ void Skills(void) {
     wait(2000, msec);
 
     Path second_long_goal_second_time_path = PathGenerator::GeneratePath(
-	    {{58.0, -46.0},
-	     {27.0, -45.0}
+	    {{58.0, -45.0},
+	     {27.0, -45.5}
 	    },
 	    50.0,
 	    20.0,
@@ -349,7 +349,7 @@ void Skills(void) {
     positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
-    wait(1900, msec);
+    wait(2100, msec);
 
     // Push in deeper
     driveFor(3, 100);
@@ -362,8 +362,8 @@ void Skills(void) {
 
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
-    	 {52.0, -24.0},
-    	 {61.5 , -12.5}
+    	 {47.0, -24.0},
+    	 {61.5 , -13.5}
     	},
     	50.0,
     	25.0,

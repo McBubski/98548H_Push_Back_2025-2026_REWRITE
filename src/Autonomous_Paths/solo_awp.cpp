@@ -154,7 +154,7 @@ void SoloAWPAuton(void) {
     pointAt(0.0, -8.0, 80, reverse);
     //pointAt(0.0, -5.5, 100, reverse);
 
-    driveFor(-15.5, 100);
+    driveFor(-14.0, 100);
     intake.spin(reverse, 100, percent);
     wait(150, msec);
     indexer_piston.set(true);
@@ -170,8 +170,8 @@ void SoloAWPAuton(void) {
     Path matchload_path_2 = PathGenerator::GeneratePath(
     	{{16, -16},
          {35.0, -35.5},
-    	 {48.0, -60.5},
-    	 {72.0, -47.0}
+    	 {48.0, -61.5},
+    	 {72.0, -48.5}
     	},
     	80.0,
     	20.0,

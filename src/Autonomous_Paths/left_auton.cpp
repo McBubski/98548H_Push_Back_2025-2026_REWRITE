@@ -52,7 +52,7 @@ void LeftAuton(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, -25.0},
     	 {48.0, -48.0},
-    	 {64.5, -40.0},
+    	 {66.0, -42.0},
     	},
     	50.0,
     	20.0,
@@ -141,7 +141,7 @@ void LeftAuton(void) {
     FollowPath(middle_ball_path, forward, 12.0);
     indexer_piston.set(false);
 
-    pointAt(7.5, -5.5, 100, reverse);
+    pointAt(5.5, -5.5, 100, reverse);
 
     driveFor(-14.75, 100);
     //hood.set(true);

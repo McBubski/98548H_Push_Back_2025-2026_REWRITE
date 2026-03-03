@@ -149,7 +149,9 @@ void RightAuton(void) {
     intake.spin(reverse, 55, percent);
     turnToHeading(225, 100);
     driveFor(4.0, 100);
-    wait(500, msec);
+    driveFor(-4.0, 100);
+    driveFor(2, 100);   
+
 
     // Wing
 

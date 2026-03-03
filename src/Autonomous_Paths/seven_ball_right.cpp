@@ -108,6 +108,7 @@ void SevenBallRightAuton(void) {
     }
 
     intake.spin(reverse, 100, percent);
+    matchloader.set(false);
     driveFor(2, 100);
     hood.set(false);
     setDrivetrainSpeed(-20);

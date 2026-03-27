@@ -44,12 +44,12 @@ void drivercontrol(void) {
         // Indexer
 
         if (Controller.ButtonL2.pressing()) {
-            indexer_piston.set(true);
-        } else {
             indexer_piston.set(false);
+        } else {
+            indexer_piston.set(true);
         }
 
-        if (Controller.ButtonL1.pressing()) {       // To score long goal
+        if (Controller.ButtonL2.pressing()) {       // To score long goal
             intake.spin(forward, 100, percent);
 
             // If the current maxes out, the motor is stalled
@@ -84,7 +84,7 @@ void drivercontrol(void) {
                     indexer.stop(coast);
                 }
             }
-        } else if (Controller.ButtonL2.pressing()) {    // To score middle high goal
+        } else if (Controller.ButtonL1.pressing()) {    // To score middle high goal
             // Resets torque stall variables
 
             hasTorqueStalled = false;

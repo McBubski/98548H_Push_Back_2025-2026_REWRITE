@@ -28,14 +28,16 @@ void oscillate (void) {
 }
 
 void TestingAuton(void) {
-    intake.spin(forward, 100, percent);
+    intake.spin(forward, 80, percent);
 
     tracking_wheel_piston.set(true);
-    setDrivetrainSpeed(80);
-    wait(350, msec);
-    turnToHeading(45, 100);
-    setDrivetrainSpeed(25);
-    wait(2500, msec);
+    setDrivetrainSpeed(50);
+    wait(750, msec);
+    turnToHeading(115, 30);
+    setDrivetrainSpeed(-40);
+    wait(550, msec);
+    hood.set(true);
+    //turnToHeading(195, 60);
     setDrivetrainSpeed(0);
     /*driveFor(2, 80);
     oscillate();

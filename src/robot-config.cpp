@@ -8,22 +8,22 @@ controller Controller;
 
 // Drivetrain
 
-motor motor_FL = motor(PORT11, ratio6_1, true); // ?
-motor motor_ML = motor(PORT12, ratio6_1, false);
-motor motor_BL = motor(PORT13, ratio6_1, true);
+motor motor_FL = motor(PORT13, ratio6_1, true); // ?
+motor motor_ML = motor(PORT9, ratio6_1, false);
+motor motor_BL = motor(PORT5, ratio6_1, true);
 
 motor_group left_drive = motor_group(motor_FL, motor_ML, motor_BL);
 
-motor motor_FR = motor(PORT17, ratio6_1, false);
-motor motor_MR = motor(PORT20, ratio6_1, true);
-motor motor_BR = motor(PORT19, ratio6_1, false);
+motor motor_FR = motor(PORT14, ratio6_1, false);
+motor motor_MR = motor(PORT8, ratio6_1, true);
+motor motor_BR = motor(PORT10, ratio6_1, false);
 
 motor_group right_drive = motor_group(motor_FR, motor_MR, motor_BR);
 
 // Intake
 
-motor intake_low = motor(PORT9, ratio6_1, false);
-motor intake_high = motor(PORT2, ratio6_1, false);
+motor intake_low = motor(PORT12, ratio6_1, true);
+motor intake_high = motor(PORT11, ratio6_1, false);
 
 motor_group intake = motor_group(intake_low, intake_high);
 
@@ -33,11 +33,11 @@ motor indexer = motor(PORT1, ratio6_1, true);
 
 // Pnematics
 
-digital_out matchloader = digital_out(Brain.ThreeWirePort.A);
-digital_out wing = digital_out(Brain.ThreeWirePort.B);
+digital_out matchloader = digital_out(Brain.ThreeWirePort.D);
+digital_out wing = digital_out(Brain.ThreeWirePort.E);
 digital_out tracking_wheel_piston = digital_out(Brain.ThreeWirePort.C);
-digital_out hood = digital_out(Brain.ThreeWirePort.D);
-digital_out indexer_piston = digital_out(Brain.ThreeWirePort.E);
+digital_out hood = digital_out(Brain.ThreeWirePort.A);
+digital_out indexer_piston = digital_out(Brain.ThreeWirePort.B);
 
 // Odometry
 

@@ -39,7 +39,7 @@ void Skills(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
     	 {48.0, 45.0},
-    	 {65.0, 39.75},
+    	 {65.0, 40.75},
     	},
     	50.0,
     	20.0,
@@ -163,7 +163,7 @@ void Skills(void) {
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-36.0, 46.0},
     	 {-54.0, 30.0},
-    	 {-62.0, 15.0}
+    	 {-62.0, 15.25}
     	},
     	50.0,
     	25.0,
@@ -265,7 +265,7 @@ void Skills(void) {
     	 {-50.0, -57.0},
     	 {-38.5, -57.0},
     	 {24, -57.0},
-         {44, -33.5} // -34.5
+         {44, -32.5} // -34.5
     	},
     	45.0,
     	25.0,
@@ -289,7 +289,7 @@ void Skills(void) {
     FollowPath(first_second_long_goal_path, reverse, 20.0);
 
     // Goal close to you left side
-    driveTo(23, -39.5, 70, reverse);
+    driveTo(23, -37.5, 70, reverse); // CHANGED FOR THIRD SKIILLS RUN, STATE 3/7
 
     driveFor(-2, 100);
     hood.set(true);
@@ -348,8 +348,11 @@ void Skills(void) {
     // Reset position rq
     positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    intake.spin(reverse, 100, percent);
+    wait(200, msec);
+    intake.spin(forward, 100, percent);
     // Reverse to fix sticking
-    wait(2100, msec);
+    wait(2000, msec);
 
     // Push in deeper
     driveFor(3, 100);
@@ -363,7 +366,7 @@ void Skills(void) {
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
     	 {47.0, -24.0},
-    	 {61.5 , -13.5}
+    	 {61.5 , -13.75}
     	},
     	50.0,
     	25.0,
@@ -389,6 +392,10 @@ void Skills(void) {
     bool parking = true;
 
     while (parking) {
+        if ((Brain.Timer.system() - startTime) < 500) {
+            continue;
+        }
+
         double error = forward_distance_sensor.objectDistance(inches) - 65.0;
 
         double driveOutput = error * 3;
@@ -408,7 +415,7 @@ void Skills(void) {
 
         if (error <= 1.0) {
             parking = false;
-            std::cout << "Parked!" << std::endl;
+            std::cout << "Parked! " << error << ", " << forward_distance_sensor.objectDistance(inches) << std::endl;
 
             matchloader.set(false);
 

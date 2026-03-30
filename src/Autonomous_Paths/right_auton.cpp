@@ -58,7 +58,7 @@ void RightAuton(void) {
 
     Path goal_path = PathGenerator::GeneratePath(
     	{{56.0, 43.5},
-    	 {30.0, 41.5},
+    	 {30.0, 42.5},
     	},
     	50.0,
     	20.0,
@@ -100,7 +100,7 @@ void RightAuton(void) {
 
 
     while (scoring) {
-        if ((Brain.Timer.system() - startScoreTime) > 3000) {
+        if ((Brain.Timer.system() - startScoreTime) > 1500) {
             scoring = false;
         }
         if (otherColor == blue) {
@@ -127,7 +127,7 @@ void RightAuton(void) {
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {11.5, 6.0}
+         {11.5, 6.5}
     	},
     	45.0,
     	15.0,
@@ -187,5 +187,6 @@ void RightAuton(void) {
     );
 
     FollowPath(wing_path, forward, 18.0);
-    turnToHeading(250, 100);
+    turnToHeading(250, 100); // 250
+    //turnToHeading(265, 100);
 }

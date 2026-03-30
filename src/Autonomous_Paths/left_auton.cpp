@@ -101,7 +101,7 @@ void LeftAuton(void) {
 
 
     while (scoring) {
-        if ((Brain.Timer.system() - startScoreTime) > 3000) {
+        if ((Brain.Timer.system() - startScoreTime) > 1000) {
             scoring = false;
         }
         if (otherColor == blue) {
@@ -124,7 +124,7 @@ void LeftAuton(void) {
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, -45.5},
     	 {48.0, -45.5},
-         {19.5, -17.0}
+         {21.0, -17.0}
     	},
     	45.0,
     	10.0,
@@ -141,16 +141,16 @@ void LeftAuton(void) {
     FollowPath(middle_ball_path, forward, 12.0);
     indexer_piston.set(false);
 
-    pointAt(5.5, -5.5, 100, reverse);
+    pointAt(7.5, -5.5, 100, reverse);
 
     driveFor(-14.75, 100);
     //hood.set(true);
     intake.spin(reverse, 100, percent);
-    wait(150,msec);
+    wait(50,msec);
     intake.spin(forward, 100, percent);
     indexer_piston.set(true);
     setDrivetrainSpeed(-5);
-    wait(600, msec);
+    wait(750, msec);
     
     // Wing
 

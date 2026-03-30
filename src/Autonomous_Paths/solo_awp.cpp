@@ -48,7 +48,7 @@ void SoloAWPAuton(void) {
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
     	 {48.0, 45.0},
-    	 {65.5, 38.0},
+    	 {65.5, 39.0},
     	},
     	50.0,
     	20.0,
@@ -171,7 +171,7 @@ void SoloAWPAuton(void) {
     	{{16, -16},
          {35.0, -35.5},
     	 {48.0, -61.5},
-    	 {72.0, -48.5}
+    	 {75.5, -49.0}
     	},
     	80.0,
     	20.0,

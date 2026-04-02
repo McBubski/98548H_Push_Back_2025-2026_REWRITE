@@ -22,7 +22,7 @@ motor_group right_drive = motor_group(motor_FR, motor_MR, motor_BR);
 
 // Intake
 
-motor intake_low = motor(PORT11, ratio6_1, false);  // X
+motor intake_low = motor(PORT11, ratio6_1, true);  // X
 motor intake_high = motor(PORT12, ratio6_1, false); // X
 
 motor_group intake = motor_group(intake_low, intake_high);

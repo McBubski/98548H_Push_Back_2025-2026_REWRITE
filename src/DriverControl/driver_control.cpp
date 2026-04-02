@@ -41,14 +41,6 @@ void drivercontrol(void) {
         left_drive.spin(forward, leftStickPosition, percent);
         right_drive.spin(forward, rightStickPosition, percent);
 
-        // Indexer
-
-        if (Controller.ButtonL2.pressing()) {
-            indexer_piston.set(false);
-        } else {
-            indexer_piston.set(true);
-        }
-
         if (Controller.ButtonL1.pressing()) {       // To score long goal
             intake.spin(forward, 100, percent);
 
@@ -111,6 +103,12 @@ void drivercontrol(void) {
             if (!colorSortingIndexerOverride) {
                 indexer.stop(coast);
             }
+        }
+
+        if (Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing()) {
+            hood.set(true);
+        } else {
+            hood.set(false);
         }
 
         // Intake

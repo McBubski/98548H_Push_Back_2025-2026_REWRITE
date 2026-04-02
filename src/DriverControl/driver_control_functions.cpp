@@ -13,5 +13,5 @@ void toggleWing() {
 
 // Toggles hood
 void toggleHood() {
-    hood.set(!hood.value());
+    indexer_piston.set(!indexer_piston.value());
 }

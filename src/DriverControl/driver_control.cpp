@@ -44,9 +44,9 @@ void drivercontrol(void) {
         // Indexer
 
         if (Controller.ButtonL2.pressing()) {
-            indexer_piston.set(true);
-        } else {
             indexer_piston.set(false);
+        } else {
+            indexer_piston.set(true);
         }
 
         if (Controller.ButtonL1.pressing()) {       // To score long goal

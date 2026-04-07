@@ -43,10 +43,10 @@ digital_out indexer_piston = digital_out(Brain.ThreeWirePort.C);
 // Odometry
 
 inertial inertial_sensor = inertial(PORT20); // X
-rotation forward_tracking_wheel = rotation(PORT17, true); // X
+rotation forward_tracking_wheel = rotation(PORT17, false); // X
 rotation sideways_tracking_wheel = rotation(PORT19, true); // X
 
-Odometry position_tracking = Odometry(2.75 / 2.0, 0.125, 1.25);
+Odometry position_tracking = Odometry(2.75 / 2.0, 0.25, 0.75);
 
 // Sensors
 

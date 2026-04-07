@@ -18,22 +18,22 @@ void turnToHeading(double heading, double turnSpeed) {
     double previousTime = startTime;
 
     // Timeout time and time spent "finished"
-    double timeout = 750 + (std::abs(startError) / 360.0) * 1350; // Base timeout plus extra time for larger turns
+    double timeout = 750 + (std::abs(startError) / 360.0) * 1500; // Base timeout plus extra time for larger turns
     double settleReachedTime = 0;
 
     // Bool if PID is running
     bool notDone = true;
 
     // PID Constants
-    double p = 0.34;//0.34;//0.325;
-    double i = 0;//0.01;
-    double d = 0.19;//0.13;//0.19;//0.15;//0.19;
+    double p = 0.35; //0.34
+    double i = 0.0001;
+    double d = 0.12; // 0.19
 
     // Ramp up
     double acceleration = 1.0;
 
     // Margins to decide when the turn is done
-    double error_margin = 1.0;
+    double error_margin = 1.5; // Might cause issues later. This is Trey from 4/6. Please check this.
     double angular_velocity_margin = 10;
 
     if (std::abs(startError) <= error_margin) {
@@ -49,13 +49,13 @@ void turnToHeading(double heading, double turnSpeed) {
 
         error = WrapAngle(heading - inertial_sensor.heading());
 
-        if (std::abs(error) <= 5) {
+        if (std::abs(error) <= 10) {
             turnPid.I = i;
         } 
 
         double speed = turnPid.Update(error, dt);
 
-        double minSpeed = 3; // minimum motor spin
+        double minSpeed = 4; // minimum motor spin
 
         if (std::abs(error) > error_margin) {
             if (std::abs(speed) < minSpeed) {
@@ -65,7 +65,7 @@ void turnToHeading(double heading, double turnSpeed) {
         }
 
         bool atTarget = (std::abs(error) <= error_margin);
-        bool isSlowed = true;//(std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin);
+        bool isSlowed = (std::abs(inertial_sensor.gyroRate(zaxis, dps)) <= angular_velocity_margin);
 
         if (atTarget && isSlowed) {
             settleReachedTime += dt;

@@ -34,15 +34,15 @@ void driveFor(double distance, double speed) {
     double turn_ki = 0;
     double turn_kd = 0.3;
 
-    double drive_kp = 3.05;//2.65;
+    double drive_kp = 2.65;//2.65;
     double drive_ki = 0;//0.075;
-    double drive_kd = 1.05;//3.85;
+    double drive_kd = 1.55;//3.85;
 
     // Ramp up speed
     double acceleration = 0.25;
 
     // Margins to determine drive end
-    double drive_margin = 0.25;
+    double drive_margin = 0.5;
     double linear_velocity_margin = 0.05; 
 
     if (std::abs(driveError) <= drive_margin) {

@@ -12,7 +12,7 @@ void LeftAuton(void);
 Auton leftAuton = {
     "Left Auton",
     "Gets lots of points!",
-    48.25, -14.5, 180.0,
+    46.25, -16.0, 180.0,
     LeftAuton
 };
 
@@ -38,8 +38,10 @@ void LeftAuton(void) {
             colorSortMode = BLUE;
         }
     }
-
+    
+    colorSortMode = BLUE;
     matchloader.set(true);
+    hood.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
@@ -66,8 +68,8 @@ void LeftAuton(void) {
     //wait(1000, msec);
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, -43.5},
-    	 {33.0, -43.75},
+    	{{56.0, -46},
+    	 {33.0, -47},
     	},
     	50.0,
     	10.0,
@@ -79,7 +81,7 @@ void LeftAuton(void) {
     FollowPath(goal_path, reverse, 18.0);
 
     intake.spin(forward, 100, percent);
-    hood.set(true);
+    indexer_piston.set(true);
     setDrivetrainSpeed(-50);
     wait(300, msec);
     setDrivetrainSpeed(0);
@@ -100,7 +102,7 @@ void LeftAuton(void) {
     bool scoring = true;
 
 
-    while (scoring) {
+    /*while (scoring) {
         if ((Brain.Timer.system() - startScoreTime) > 1000) {
             scoring = false;
         }
@@ -114,19 +116,19 @@ void LeftAuton(void) {
             }
         }
         wait(5, msec);
-    }
+    }*/
+
+    wait(900, msec);
 
     // Stop scoring
     matchloader.set(false);
-    hood.set(false);
-    indexer_piston.set(true);
 
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, -45.5},
     	 {48.0, -45.5},
-         {21.0, -17.0}
+         {21.0, -21.0}
     	},
-    	45.0,
+    	50.0,
     	10.0,
     	3,
     	0.7,
@@ -135,21 +137,19 @@ void LeftAuton(void) {
 
     middle_ball_path.waypoints[13].onReach = []() {
         matchloader.set(true);
+        indexer_piston.set(false);
     };
 
     intake.spin(forward, 100, percent);
     FollowPath(middle_ball_path, forward, 12.0);
-    indexer_piston.set(false);
 
-    pointAt(7.5, -5.5, 100, reverse);
+    pointAt(5.5, -5.5, 100, reverse);
 
-    driveFor(-14.75, 100);
-    //hood.set(true);
-    intake.spin(reverse, 100, percent);
-    wait(50,msec);
+    hood.set(false);
+    driveFor(-16.0, 100);
     intake.spin(forward, 100, percent);
     indexer_piston.set(true);
-    setDrivetrainSpeed(-5);
+    setDrivetrainSpeed(-2);
     wait(750, msec);
     
     // Wing
@@ -160,7 +160,7 @@ void LeftAuton(void) {
 	     {34.0, -41.0},
 	     {42.0, -42.0}
 	    },
-	    40.0,
+	    50.0,
 	    10.0,
 	    3.0,
 	    0.2,
@@ -176,7 +176,7 @@ void LeftAuton(void) {
 	    {{37.5, -48.5},
          {26.0, -45.5},
          {18.0, -44.5},
-         {9, -37}
+         {6, -37}
 	    },
 	    40.0,
 	    5.0,
@@ -185,7 +185,6 @@ void LeftAuton(void) {
 	    2.0
     );
 
-    hood.set(false);
     FollowPath(wing_path, reverse, 18.0);
     turnToHeading(120, 100);
 }

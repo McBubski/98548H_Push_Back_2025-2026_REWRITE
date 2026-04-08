@@ -22,7 +22,9 @@ void drivercontrol(void) {
     
     Controller.ButtonB.pressed(toggleMatchload);
     Controller.ButtonY.pressed(toggleHood);
+    Controller.ButtonDown.pressed(toggleIndexer);
     Controller.ButtonRight.pressed(toggleWing);
+    Controller.ButtonUp.pressed(toggleIntakeBSIWonderHowLongICanNameAFunctionTurnsOutItsPrettyLongIWonderWhyYoudEverDoThisButThatsCoolAmazeAmazeAmazeEpicFunctionSauceILikeBajaBlastAndLongFunctionNamesEpicSixtyNine);
 
     left_drive.setStopping(coast);
     right_drive.setStopping(coast);
@@ -105,11 +107,11 @@ void drivercontrol(void) {
             }
         }
 
-        if (Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing()) {
+        /*if (Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing()) {
             hood.set(true);
         } else {
             hood.set(false);
-        }
+        }*/
 
         // Intake
 

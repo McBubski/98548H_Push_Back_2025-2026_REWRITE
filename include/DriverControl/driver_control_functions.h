@@ -3,3 +3,5 @@
 void toggleMatchload();
 void toggleWing();
 void toggleHood();
+void toggleIndexer();
+void toggleIntakeBSIWonderHowLongICanNameAFunctionTurnsOutItsPrettyLongIWonderWhyYoudEverDoThisButThatsCoolAmazeAmazeAmazeEpicFunctionSauceILikeBajaBlastAndLongFunctionNamesEpicSixtyNine();

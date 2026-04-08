@@ -36,9 +36,10 @@ motor indexer = motor(PORT5, ratio6_1, true);
 digital_out matchloader = digital_out(Brain.ThreeWirePort.B);
 digital_out wing = digital_out(Brain.ThreeWirePort.F);
 digital_out tracking_wheel_piston = digital_out(Brain.ThreeWirePort.E);
-digital_out hood = digital_out(Brain.ThreeWirePort.A);
-digital_out indexer_piston = digital_out(Brain.ThreeWirePort.C);
-// Intake is D
+digital_out hood = digital_out(Brain.ThreeWirePort.C);
+digital_out indexer_piston = digital_out(Brain.ThreeWirePort.A);
+digital_out intake_piston = digital_out(Brain.ThreeWirePort.D);
+digital_out low_goal_BS = digital_out(Brain.ThreeWirePort.G);
 
 // Odometry
 

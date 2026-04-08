@@ -12,7 +12,7 @@ void RightAuton(void);
 Auton rightAuton = {
     "Right Auton",
     "Gets lots of points!",
-    48.25, 14.5, 0.0,
+    50.5, 18.0, 0.0,
     RightAuton
 };
 
@@ -23,6 +23,7 @@ void RightAuton(void) {
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     
+    // Auto detect color
     if (color_sensor.isNearObject()) {
         color allianceColor = color_sensor.color();
         if (allianceColor == red) {
@@ -32,18 +33,24 @@ void RightAuton(void) {
         }
     }
 
+    // Start auton
+
     matchloader.set(true);
+    hood.set(true);
+
     intake.spin(forward, 100, percent);
+
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
 
-    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos, Right);
-    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos, Right);
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
+    // Drive to matchloader
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {48.0, 45.0},
-    	 {66.5, 39.75},
+    	 {48.0, 46.0},
+    	 {73.0 /*almost nice*/, 44.5},
     	},
     	50.0,
     	20.0,
@@ -53,32 +60,23 @@ void RightAuton(void) {
     );
 
     FollowPath(matchload_path, forward, 12.0);
-    //setDrivetrainSpeed(10);
-    //wait(500, msec);
 
+    // Drive to goal
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 43.5},
-    	 {30.0, 42.5},
+    	{{56.0, 47.5},
+    	 {30.0, 48.5},
     	},
-    	50.0,
+    	55.0,
     	20.0,
     	3,
     	0.6,
     	3.0
     );
-    
-    // Reverse intake a bit to prevent jams
-    /*goal_path.waypoints[3].onReach = []() {
-        std::cout << "Reversing!" << std::endl;
-        intake.spin(reverse, 100, percent);
-        wait(300, msec);
-        intake.stop();
-    };*/
 
     FollowPath(goal_path, reverse, 18.0);
 
     intake.spin(forward, 100, percent);
-    hood.set(true);
+    indexer_piston.set(true);
     setDrivetrainSpeed(-50);
     wait(300, msec);
     setDrivetrainSpeed(0);
@@ -100,7 +98,7 @@ void RightAuton(void) {
 
 
     while (scoring) {
-        if ((Brain.Timer.system() - startScoreTime) > 1500) {
+        if ((Brain.Timer.system() - startScoreTime) > 1000) {
             scoring = false;
         }
         if (otherColor == blue) {
@@ -120,16 +118,16 @@ void RightAuton(void) {
     // Stop scoring
     //driveFor(6, 100);
     //setDrivetrainSpeed(-100);
-    hood.set(false);
     //wait(400, msec);
-    indexer_piston.set(true);
+    //indexer_piston.set(false);
 
+    // Drive to middle
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {11.5, 6.5}
+         {11.0, 13.0}
     	},
-    	45.0,
+    	55.0,
     	15.0,
     	3,
     	0.7,
@@ -141,27 +139,28 @@ void RightAuton(void) {
         intake.stop();
         intake_low.spin(forward, 100, percent);
 
-        indexer_piston.set(false);
+        //indexer_piston.set(false);
     };
 
     matchloader.set(false);
     FollowPath(middle_ball_path, forward, 14.0);
     intake.spin(reverse, 55, percent);
+    low_goal_BS.set(true);
     turnToHeading(225, 100);
     driveFor(4.0, 100);
-    driveFor(-4.0, 100);
-    driveFor(2, 100);   
+    //driveFor(-4.0, 100);
+    //driveFor(2, 100);   
 
 
     // Wing
 
     Path reverse_path = PathGenerator::GeneratePath(
-	    {{15.5, 15.0},
-	     {29.0, 25.0},
-	     {34.0, 32.0},
-	     {42.0, 35.0}
+	    {{15.5, 19.0},
+	     {29.0, 28.0},
+	     {34.0, 38.0},
+	     {42.0, 47.0}
 	    },
-	    40.0,
+	    50.0,
 	    10.0,
 	    3.0,
 	    0.2,
@@ -170,14 +169,16 @@ void RightAuton(void) {
 
     FollowPath(reverse_path, reverse, 14.0);
 
+    low_goal_BS.set(false);
+
     //driveFor(-34, 100);
     //turnToHeading(270, 100);
 
     Path wing_path = PathGenerator::GeneratePath(
-	    {{37.5, 42.5},
-         {26.0, 39.0},
-         {16.0, 38.0},
-         {6, 33.0}
+	    {{37.5, 47.5},
+         {26.0, 45.0},
+         {16.0, 44.0},
+         {10, 41.0}
 	    },
 	    40.0,
 	    5.0,

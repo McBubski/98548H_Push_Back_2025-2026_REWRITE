@@ -21,8 +21,8 @@ void drivercontrol(void) {
     // Connect buttons to pneumatics
     
     Controller.ButtonB.pressed(toggleMatchload);
-    Controller.ButtonY.pressed(toggleHood);
-    Controller.ButtonDown.pressed(toggleIndexer);
+    Controller.ButtonY.pressed(toggleIndexer);
+    Controller.ButtonDown.pressed(toggleHood);
     Controller.ButtonRight.pressed(toggleWing);
     Controller.ButtonUp.pressed(toggleIntakeBSIWonderHowLongICanNameAFunctionTurnsOutItsPrettyLongIWonderWhyYoudEverDoThisButThatsCoolAmazeAmazeAmazeEpicFunctionSauceILikeBajaBlastAndLongFunctionNamesEpicSixtyNine);
 
@@ -33,7 +33,7 @@ void drivercontrol(void) {
 
     tracking_wheel_piston.set(true);
     wing.set(true);
-
+    toggleHood();
     while (1) {
         // Maps motor speed to stick position %
 
@@ -42,7 +42,7 @@ void drivercontrol(void) {
 
         left_drive.spin(forward, leftStickPosition, percent);
         right_drive.spin(forward, rightStickPosition, percent);
-
+        
         if (Controller.ButtonL1.pressing()) {       // To score long goal
             intake.spin(forward, 100, percent);
 
@@ -121,16 +121,27 @@ void drivercontrol(void) {
                 indexer.spin(forward, 100, percent);
             }
         } else if (Controller.ButtonR2.pressing()) {    // Outaking
-            intake.spin(reverse, 100, percent);
+            low_goal_BS.set(true);
+            if (auton_path == 6) {
+                intake_piston.set(true);
+                intake.spin(reverse, 40, percent);
+                
+            } else {
+                intake.spin(reverse, 100, percent);
+            }
+            
             if (!colorSortingIndexerOverride) {
                 indexer.spin(reverse, 100, percent);
             }
         } else {
             // Don't stop intake if the indexer is doing stuff
+            intake_piston.set(false);
+            low_goal_BS.set(false);
             if (!(Controller.ButtonL1.pressing() || Controller.ButtonL2.pressing())) {
                 intake.stop(coast);
             }
         }
+
 
         wait(20, msec);
     }

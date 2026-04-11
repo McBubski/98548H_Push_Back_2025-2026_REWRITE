@@ -16,16 +16,12 @@ Auton leftAuton = {
     LeftAuton
 };
 
-int forceStop() {
-    int startTime = Brain.Timer.system();
-    while (true) {
-        if (Brain.Timer.system() - startTime >= 15000) {
-            Controller.rumble("-");
-            //std::cout << Brain.Timer.system() - startTime << std::endl;
-        }
+int left_matchloader_hack (void) {
+    std::cout << "Start" << std::endl;
+    wait(1750, msec);
+    std::cout << "Stop!" << std::endl;
+    RAT_Interrupt = true;
 
-        wait(20, msec);
-    };
     return 1;
 }
 
@@ -45,6 +41,7 @@ void LeftAuton(void) {
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
+    task left_matchloader_fix = task(left_matchloader_hack);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Neg, Left);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
@@ -136,20 +133,20 @@ void LeftAuton(void) {
     );
 
     middle_ball_path.waypoints[13].onReach = []() {
-        matchloader.set(true);
+        //matchloader.set(true);
         indexer_piston.set(false);
     };
 
     intake.spin(forward, 100, percent);
     FollowPath(middle_ball_path, forward, 12.0);
 
-    pointAt(5.5, -5.5, 100, reverse);
+    pointAt(5.25, -5.75, 100, reverse);
 
     hood.set(false);
     driveFor(-16.0, 100);
     intake.spin(forward, 100, percent);
     indexer_piston.set(true);
-    setDrivetrainSpeed(-2);
+    setDrivetrainSpeed(-4);
     wait(750, msec);
     
     // Wing
@@ -157,7 +154,7 @@ void LeftAuton(void) {
     Path reverse_path = PathGenerator::GeneratePath(
 	    {{15.5, -19.0},
 	     {29.0, -33.0},
-	     {34.0, -41.0},
+	     {38.0, -41.0},
 	     {42.0, -42.0}
 	    },
 	    50.0,
@@ -173,9 +170,9 @@ void LeftAuton(void) {
     //turnToHeading(270, 100);
 
     Path wing_path = PathGenerator::GeneratePath(
-	    {{37.5, -48.5},
-         {26.0, -45.5},
-         {18.0, -44.5},
+	    {{43.5, -46.5},
+         {35.0, -43.5},
+         {18.0, -42.5},
          {6, -37}
 	    },
 	    40.0,

@@ -11,20 +11,43 @@ void SoloAWPAuton(void);
 Auton soloAWPAuton = {
     "Solo AWP",
     "Eat that trash teams",
-    48.25, 18.5, 0.0,
+    50.5, 17.75, 0.0,
     SoloAWPAuton
 };
 
 int matchloader_hack (void) {
     std::cout << "Start" << std::endl;
-    wait(2500, msec);
+    wait(1800, msec);
+    std::cout << "Driving forward" << std::endl;
+    Controller.rumble("---");
+    RAT_Interrupt = true;
+    setDrivetrainSpeed(50);
+    wait(800, msec);
+    std::cout << "Stop!" << std::endl;
+
+    return 1;
+}
+
+int far_matchloader_hack(void) {
+    std::cout << "Start" << std::endl;
+    wait(1500, msec);
     std::cout << "Stop!" << std::endl;
     RAT_Interrupt = true;
+
+    return 1;    
+}
+
+int timerEst(void) {
+    wait(15, seconds);
+    std::cout << ("DING DING DING") << std::endl;
+    Controller.rumble(".");
 
     return 1;
 }
 
 void SoloAWPAuton(void) {
+    task t = task(timerEst);
+
     if (color_sensor.isNearObject()) {
         color allianceColor = color_sensor.color();
         if (allianceColor == red) {
@@ -60,24 +83,28 @@ void SoloAWPAuton(void) {
     );                       Might be important*/
 
     Path matchload_path = PathGenerator::GeneratePath(
-    	{{51.0, 24.0},
-    	 {48.0, 48.0},
-    	 {69.0, 44.75},
+    	{{48.0, 24.0},
+    	 {49.0, 46.0},
+    	 {73.0 /*almost nice*/, 44.5},
     	},
-    	50.0,
+    	55.0,
     	20.0,
     	3.0,
     	0.55,
     	0.20
     );
 
+    std::cout << "Finished path" << std::endl;
     FollowPath(matchload_path, forward, 12.0);
+    setDrivetrainSpeed(70);
+    wait(300, msec);
+    std::cout << "Finished driving" << std::endl;
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 49.0},
-    	 {29.5, 48.0},
+    	{{56.0, 53.0},
+    	 {29.5, 50.5},
     	},
-    	50.0,
+    	55.0,
     	20.0,
     	3,
     	0.6,
@@ -128,16 +155,16 @@ void SoloAWPAuton(void) {
     matchloader.set(false);
 
     Path middle_goal_ball_path = PathGenerator::GeneratePath(
-	    {{32.5, 44.0},
-	     {27.0, 34.0},
-	     {22.0, 30.5},
-	     {22.0, -24.0}
+	    {{34.0, 49.0},
+	     {30.0, 34.0},
+	     {24.0, 30.5},
+	     {24.0, -24.0}
 	    },
-	    60.0,
+	    80.0,
 	    25.0,
 	    6.0,
 	    0.40,
-	    3.0
+	    3.5
     );
 
     middle_goal_ball_path.waypoints[7].onReach = []() {
@@ -185,7 +212,7 @@ void SoloAWPAuton(void) {
     );
 
     matchload_path_2.waypoints[1].onReach = []() {
-        task hack_2 = task(matchloader_hack);
+        task hack_2 = task(far_matchloader_hack);
     };
 
     FollowPath(matchload_path_2, forward, 20.0);
@@ -194,8 +221,8 @@ void SoloAWPAuton(void) {
     //wait(450, msec);
 
     Path goal_path1 = PathGenerator::GeneratePath(
-    	{{56.0, -46.0},
-    	 {27.0, -45.5},
+    	{{56.0, -48.0},
+    	 {29.5, -48.5},
     	},
     	50.0,
     	10.0,

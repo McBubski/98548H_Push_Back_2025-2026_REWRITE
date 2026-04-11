@@ -11,7 +11,7 @@ void TestingAuton(void);
 Auton testingAuton = {
     "Testing Auton",
     "Testing stuff for Trey fr",
-    0, 0, 0,
+    46.25, -16.0, 180.0,
     TestingAuton
 };
 
@@ -28,11 +28,11 @@ void oscillate (void) {
 }
 
 void TestingAuton(void) {
-    colorSortMode = BLUE;
-    driveFor(32, 100);
-    turnToHeading(180, 100);
-    driveFor(32, 100);
-    turnToHeading(0, 100);
+    while (true) {
+        std::vector<double> positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
+        position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+        wait(500, msec);
+    }
 
     /*tracking_wheel_piston.set(true);
     setDrivetrainSpeed(80);

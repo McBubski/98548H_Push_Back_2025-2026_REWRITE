@@ -12,9 +12,18 @@ void RightAuton(void);
 Auton rightAuton = {
     "Right Auton",
     "Gets lots of points!",
-    50.5, 18.0, 0.0,
+    50.5, 17.75, 0.0,
     RightAuton
 };
+
+int right_matchloader_hack (void) {
+    std::cout << "Start" << std::endl;
+    wait(2500, msec);
+    std::cout << "Stop!" << std::endl;
+    RAT_Interrupt = true;
+
+    return 1;
+}
 
 
 void RightAuton(void) {
@@ -42,6 +51,7 @@ void RightAuton(void) {
 
     indexer.spin(forward, 100, percent);
     task indexerTask = task(CheckMotorStallTask);
+    task right_matchloader_fix = task(right_matchloader_hack);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos, Right);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
@@ -49,7 +59,7 @@ void RightAuton(void) {
     // Drive to matchloader
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {48.0, 46.0},
+    	 {49.0, 46.0},
     	 {73.0 /*almost nice*/, 44.5},
     	},
     	50.0,
@@ -63,8 +73,8 @@ void RightAuton(void) {
 
     // Drive to goal
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 47.5},
-    	 {30.0, 48.5},
+    	{{56.0, 53.0},
+    	 {30.0, 50.5},
     	},
     	55.0,
     	20.0,
@@ -125,7 +135,7 @@ void RightAuton(void) {
     Path middle_ball_path = PathGenerator::GeneratePath(
     	{{36.0, 47.5},
     	 {48.0, 46.5},
-         {11.0, 13.0}
+         {10.5, 13.0}
     	},
     	55.0,
     	15.0,
@@ -138,6 +148,7 @@ void RightAuton(void) {
         std::cout << "reached" << std::endl;
         intake.stop();
         intake_low.spin(forward, 100, percent);
+        intake_high.spin(forward, 15, percent);
 
         //indexer_piston.set(false);
     };
@@ -146,8 +157,10 @@ void RightAuton(void) {
     FollowPath(middle_ball_path, forward, 14.0);
     intake.spin(reverse, 55, percent);
     low_goal_BS.set(true);
-    turnToHeading(225, 100);
+    intake_piston.set(true);
+    //turnToHeading(225, 100);
     driveFor(4.0, 100);
+    wait(1000, msec);
     //driveFor(-4.0, 100);
     //driveFor(2, 100);   
 
@@ -170,14 +183,15 @@ void RightAuton(void) {
     FollowPath(reverse_path, reverse, 14.0);
 
     low_goal_BS.set(false);
+    intake_piston.set(false);
 
     //driveFor(-34, 100);
     //turnToHeading(270, 100);
 
     Path wing_path = PathGenerator::GeneratePath(
-	    {{37.5, 47.5},
-         {26.0, 45.0},
-         {16.0, 44.0},
+	    {{37.5, 48.5},
+         {26.0, 46.0},
+         {16.0, 45.0},
          {10, 41.0}
 	    },
 	    40.0,

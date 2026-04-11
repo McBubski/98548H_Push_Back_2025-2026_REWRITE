@@ -5,29 +5,36 @@
 #include <iostream>
 
 // Forward sensor settings
-double Forward_Sensor_Offset_X = -5.0;
-double Forward_Sensor_Offset_Y = 5.0;
+double Forward_Sensor_Offset_X = -3.125;
+double Forward_Sensor_Offset_Y = 8.0;
 
 double Forward_Sensor_Angle_Offset = 0.0;
 double Forward_Sensor_Calibration_Bias = 5.0/8.0;
 
+// Backward sensor settings
+double Backward_Sensor_Offset_X = 3.5;
+double Backward_Sensor_Offset_Y = -5.5;
+
+double Backward_Sensor_Angle_Offset = 180.0;
+double Backward_Sensor_Calibration_Bias = 0.0;
+
 // Left sensor settings
-double Left_Sensor_Offset_X = -3.75;
-double Left_Sensor_Offset_Y = -5.0;
+double Left_Sensor_Offset_X = -5.25;
+double Left_Sensor_Offset_Y = 3.375;
 
 double Left_Sensor_Angle_Offset = -90.0;
 double Left_Sensor_Calibration_Bias = 0.0;
 
 // Right sensor settings
-double Right_Sensor_Offset_X = 3.75;
-double Right_Sensor_Offset_Y = -5.0;
+double Right_Sensor_Offset_X = 6.5;
+double Right_Sensor_Offset_Y = 2.125;
 
 double Right_Sensor_Angle_Offset = 90.0;
 double Right_Sensor_Calibration_Bias = 0.0;
 
 // Other settings
 
-double Max_Valid_Distance = 390.0;
+double Max_Valid_Distance = 350.0;
 double Field_Min = -70.5;
 double Field_Max = 70.5;
 double Epsilon = 1e-6;
@@ -43,6 +50,13 @@ std::vector<double> ResetFieldPositionFromDistanceWithOdometry() {
         Forward_Sensor_Offset_X, 
         Forward_Sensor_Offset_Y, 
         Forward_Sensor_Angle_Offset
+    );
+
+    WallMeasurement backMeasurement = ProcessDistanceSensor(
+        back_distance_sensor, 
+        Backward_Sensor_Offset_X, 
+        Backward_Sensor_Offset_Y, 
+        Backward_Sensor_Angle_Offset
     );
 
     WallMeasurement leftMeasurement = ProcessDistanceSensor(
@@ -61,50 +75,84 @@ std::vector<double> ResetFieldPositionFromDistanceWithOdometry() {
 
     // Handle fusion of left and right
 
-    WallMeasurement chosenSide;
-    bool sideValid = false;
+    WallMeasurement horizontalChosenSide;
+    bool horizontalSideValid = false;
 
     // If both sides return a valid estimate
     if (leftMeasurement.axis != AXIS_NONE && rightMeasurement.axis != AXIS_NONE) {
-        std::cout << "Data from both sides!" << std::endl;
+        std::cout << "Data from left and right sides!" << std::endl;
         if (leftMeasurement.axis == rightMeasurement.axis) {
             if (leftMeasurement.sensorDistance < rightMeasurement.sensorDistance) {
-                chosenSide = leftMeasurement;
+                horizontalChosenSide = leftMeasurement;
             } else {
-                chosenSide = rightMeasurement;
+                horizontalChosenSide = rightMeasurement;
             }
         } else {
             if (leftMeasurement.sensorDistance < rightMeasurement.sensorDistance) {
-                chosenSide = leftMeasurement;
+                horizontalChosenSide = leftMeasurement;
             } else {
-                chosenSide = rightMeasurement;
+                horizontalChosenSide = rightMeasurement;
             }
         }
-        sideValid = true;
+        horizontalSideValid = true;
     } else if (leftMeasurement.axis != AXIS_NONE) {
         std::cout << "Data from left!" << std::endl;
-        chosenSide = leftMeasurement;
-        sideValid = true;
+        horizontalChosenSide = leftMeasurement;
+        horizontalSideValid = true;
     } else if (rightMeasurement.axis != AXIS_NONE) {
         std::cout << "Data from right!" << std::endl;
-        chosenSide = rightMeasurement;
-        sideValid = true;
+        horizontalChosenSide = rightMeasurement;
+        horizontalSideValid = true;
+    }
+
+    // Handle fusion of forward and back
+
+    WallMeasurement verticalChosenSide;
+    bool verticalSideValid = false;
+
+    // If both sides return a valid estimate
+    if (frontMeasurement.axis != AXIS_NONE && backMeasurement.axis != AXIS_NONE) {
+        std::cout << "Data from front and back sides!" << std::endl;
+        if (frontMeasurement.axis == backMeasurement.axis) {
+            if (frontMeasurement.sensorDistance < backMeasurement.sensorDistance) {
+                verticalChosenSide = frontMeasurement;
+            } else {
+                verticalChosenSide = backMeasurement;
+            }
+        } else {
+            if (frontMeasurement.sensorDistance < backMeasurement.sensorDistance) {
+                verticalChosenSide = frontMeasurement;
+            } else {
+                verticalChosenSide = backMeasurement;
+            }
+        }
+        verticalSideValid = true;
+    } else if (frontMeasurement.axis != AXIS_NONE) {
+        std::cout << "Data from front!" << std::endl;
+        verticalChosenSide = frontMeasurement;
+        verticalSideValid = true;
+    } else if (backMeasurement.axis != AXIS_NONE) {
+        std::cout << "Data from back!" << std::endl;
+        verticalChosenSide = backMeasurement;
+        verticalSideValid = true;
     }
 
     double estimatedXDistance = position_tracking.GlobalXPos;
     double estimatedYDistance = position_tracking.GlobalYPos;
 
-    if (frontMeasurement.axis == AXIS_X) {
-        estimatedXDistance = frontMeasurement.estimatedPosition;
-    } else if (frontMeasurement.axis == AXIS_Y) {
-        estimatedYDistance = frontMeasurement.estimatedPosition;
+    if (verticalSideValid) {
+        if (verticalChosenSide.axis == AXIS_X) {
+            estimatedXDistance = verticalChosenSide.estimatedPosition;
+        } else if (verticalChosenSide.axis == AXIS_Y) {
+            estimatedYDistance = verticalChosenSide.estimatedPosition;
+        }
     }
 
-    if (sideValid) {
-        if (chosenSide.axis == AXIS_X) {
-            estimatedXDistance = chosenSide.estimatedPosition;
-        } else if (chosenSide.axis == AXIS_Y) {
-            estimatedYDistance = chosenSide.estimatedPosition;
+    if (horizontalSideValid) {
+        if (horizontalChosenSide.axis == AXIS_X) {
+            estimatedXDistance = horizontalChosenSide.estimatedPosition;
+        } else if (horizontalChosenSide.axis == AXIS_Y) {
+            estimatedYDistance = horizontalChosenSide.estimatedPosition;
         }
     }
 
@@ -123,6 +171,8 @@ WallMeasurement ProcessDistanceSensor(distance distanceSensor, double sensor_off
     double measuredDistance = distanceSensor.objectDistance(distanceUnits::in);
 
     // Sensor validity check
+
+    std::cout << distanceSensor.index() << " distance: " << measuredDistance << std::endl;
 
     if (!distanceSensor.installed() || measuredDistance <= 0 || measuredDistance > Max_Valid_Distance) {
         std::cout << "Invalid." << std::endl;

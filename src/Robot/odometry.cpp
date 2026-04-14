@@ -128,4 +128,9 @@ void Odometry::SetPosition(double new_x, double new_y, double new_heading) {
 void Odometry::SetPositionToCurrentAuton() {
     Auton* current_auton = autons[auton_path];
     SetPosition(current_auton->startX, current_auton->startY, current_auton->startHeading);
+
+    /*if (auton_path == 6) {
+        intake_piston.set(true);
+    }*/
+
 }

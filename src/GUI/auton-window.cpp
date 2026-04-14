@@ -27,6 +27,7 @@ void SelectAuton(void) {
 
         if (auton_index < num_autons) {
             auton_path = auton_index;
+
             position_tracking.SetPositionToCurrentAuton();
 
             window = "Odometry";

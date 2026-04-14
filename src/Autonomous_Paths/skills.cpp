@@ -11,7 +11,7 @@ void Skills(void);
 Auton skillsAuton = {
     "Skills",
     "Epic Skills Oh Yeah",
-    48.25, 14.5, 0.0,
+    50.5, 17.75, 0.0,//57.625, 0.0, 90.0,
     Skills
 };
 
@@ -24,22 +24,53 @@ int matchloader_hack_skills (void) {
     return 1;
 }
 
+int matchload_clear_task(void) {
+   bool drivingIntoZone = true;
+
+   float wiggle_I = 0;
+   float wiggle_Amp = 60;
+   float wiggle_Baseline = 90;
+
+    while(drivingIntoZone) {
+        if (forward_distance_sensor.objectDistance(mm) <= 70) {
+            wiggle_Baseline = 60;
+            wiggle_I += 0.4;
+        }
+        if (forward_distance_sensor.objectDistance(mm) <= 50) {
+            drivingIntoZone = false;
+            std::cout << "Fully into zone. (" << forward_distance_sensor.objectDistance(mm) << " mm)" << std::endl;
+        }
+
+        float output = (sin(wiggle_I) * wiggle_Amp);
+
+        std::cout << output << std::endl;
+
+        left_drive.spin(forward, wiggle_Baseline + output, percent);
+        right_drive.spin(forward, wiggle_Baseline - output, percent);
+
+        wait(20, msec);
+    }
+
+    left_drive.stop(brake);
+    right_drive.stop(brake);
+
+    return 1;
+}
+
 void Skills(void) {
+
     // Curve to the first matchloader
 
-    std::vector<double> positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
-    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
+    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
-    indexer.spin(forward, 100, percent);
-    task indexerTask = task(CheckMotorStallTask);
-    //task matchloader_hacky_fix = task(matchloader_hack_skills);
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {48.0, 45.0},
-    	 {65.0, 40.75},
+    	 {49.0, 44.0},
+    	 {73.0 /*almost nice*/, 41.0},
     	},
     	50.0,
     	20.0,
@@ -50,64 +81,53 @@ void Skills(void) {
 
     FollowPath(matchload_path, forward, 12.0);
     setDrivetrainSpeed(5);
-    wait(1200, msec);
+    wait(200, msec);
 
     // DONT TOUCH
 
     Path first_long_goal_path = PathGenerator::GeneratePath(
-    	{{57.5, 48.0},
-    	 {50.0, 56.0},
-    	 {38.5, 56.0},
-    	 {-30, 56.0},
-         {-40, 36.5}
+    	{{57.5, 52.0},
+    	 {50.0, 58.0},
+    	 {38.5, 60.0},
+    	 {-34, 58.0},
+         {-40, 44.0}
     	},
     	45.0,
-    	30.0,
+    	25.0,
     	4.0,
     	0.3,
-    	2.5
+    	2.0
     );
 
     first_long_goal_path.waypoints[4].onReach = []() {
         matchloader.set(false);
     };
-
-    first_long_goal_path.waypoints[10].onReach = []() {
-        std::cout << "Reversing!" << std::endl;
-        intake.spin(reverse, 100, percent);
-        wait(250, msec);
-        intake.stop();
-    };
     
     wing.set(true);
-    FollowPath(first_long_goal_path, reverse, 18.0);
+    FollowPath(first_long_goal_path, reverse, 20.0);
 
-    
-    pointAt(-21, 41.0, 100, reverse);
-    driveTo(-21, 40.0, 60, reverse);
-
-
-    //setDrivetrainSpeed(-20);
-    //intake.spin(reverse, 100, percent);
-    //wait(250, msec);
+    pointAt(-21, 48.0, 100, reverse);
+    driveTo(-21, 48.0, 60, reverse);
 
     // Get rid of our current blocks
 
     hood.set(true);
+    indexer_piston.set(true);
     intake.spin(forward, 100, percent);
-    indexer.spin(forward, 100, percent);
+
     wait(400, msec);
+
     // Reset position rq
-    positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
-    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    ///positionEstimate = EstimatePositionWithDistance(X_Neg);
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
     wait(2000, msec);
 
     // Drive into farside matchloader
 
     Path second_matchloader_path = PathGenerator::GeneratePath(
-	    {{-36.0, 44.5},
-	     {-62.0, 45.0}
+	    {{-36.0, 47.5},
+	     {-62.0, 47.5}
 	    },
 	    50.0,
 	    20.0,
@@ -116,19 +136,16 @@ void Skills(void) {
 	    3.0
     );
 
-    second_matchloader_path.waypoints[1].onReach = []() {
-        hood.set(false);
-    };
-
     matchloader.set(true);
+    indexer_piston.set(false);
     FollowPath(second_matchloader_path, forward, 18.0);
     setDrivetrainSpeed(10);
 
     wait(1750, msec);
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
-	    {{-58.0, 44.5},
-	     {-25.5, 46.5}
+	    {{-58.0, 47.5},
+	     {-25.5, 49.0}
 	    },
 	    50.0,
 	    20.0,
@@ -140,22 +157,18 @@ void Skills(void) {
     FollowPath(first_long_goal_second_time_path, reverse, 18.0);
     setDrivetrainSpeed(-30);
 
-    hood.set(true);
+    //hood.set(true);
     intake.spin(forward, 100, percent);
-    indexer.spin(forward, 100, percent);
+    indexer_piston.set(true);
     wait(300, msec);
     setDrivetrainSpeed(0);
     // Reset position rq
-    positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
+    positionEstimate = EstimatePositionWithDistance(X_Neg);
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
     wait(2750, msec);
 
     // Push in deeper
-    driveFor(3, 100);
-    hood.set(false);
-    setDrivetrainSpeed(-10);
-    wait(750, msec);
     driveFor(6, 100);
 
     // Drive to clear first park zone
@@ -163,7 +176,7 @@ void Skills(void) {
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-36.0, 46.0},
     	 {-54.0, 30.0},
-    	 {-62.0, 15.25}
+    	 {-64.0, 15.25}
     	},
     	50.0,
     	25.0,
@@ -179,6 +192,7 @@ void Skills(void) {
 
     // Clear zone
     tracking_wheel_piston.set(true);
+    indexer_piston.set(false);
     wait(200, msec);
     setDrivetrainSpeed(35);
     matchloader.set(true);
@@ -217,7 +231,7 @@ void Skills(void) {
     matchloader.set(false);
 
     //turnToHeading(180, 100);
-    positionEstimate = ResetFieldPositionFromDistanceWithOdometry();
+    positionEstimate = EstimatePositionWithDistance(Y_Neg);
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     wait(50, msec);
     pointAt(-48.0, -52.5, 100, forward);
@@ -225,7 +239,7 @@ void Skills(void) {
     Path drive_to_third_matchloader_path = PathGenerator::GeneratePath(
     	{{-56.0, -24.0},
     	 {-52, -30.0},
-    	 {-46.0, -51.5} // -51.5
+    	 {-46.0, -48.5} // -51.5
     	},
     	45.0,
     	25.0,
@@ -241,9 +255,9 @@ void Skills(void) {
     //driveFor(-4, 100);
     matchloader.set(true);
 
-    /*Path third_matchloader_path = PathGenerator::GeneratePath(
-	    {{-50.0, -46.0},
-	     {-62.0, -45.0}
+    Path third_matchloader_path = PathGenerator::GeneratePath(
+	    {{-50.0, -48.0},
+	     {-62.0, -48.0}
 	    },
 	    40.0,
 	    10.0,
@@ -252,9 +266,9 @@ void Skills(void) {
 	    3.0
     );
 
-    FollowPath(third_matchloader_path, forward, 18.0);*/
+    FollowPath(third_matchloader_path, forward, 18.0);
 
-    driveTo(-62.0, -44.0, 80, forward);
+    driveTo(-62.0, -48.0, 80, forward);
 
     setDrivetrainSpeed(10);
 
@@ -424,3 +438,54 @@ void Skills(void) {
         }
     }
 }
+
+/*    // NEW SKILLS
+
+    // Clears first park zone
+
+    intake_piston.set(false);
+    tracking_wheel_piston.set(true);
+    intake.spin(forward, 100, percent);
+
+    wait(500, msec);
+
+    matchload_clear_task();
+
+    wait(200, msec);
+
+    left_drive.stop(brake);
+    right_drive.stop(brake); 
+
+    wait(400, msec);
+
+    // Exit park zone
+
+    setDrivetrainSpeed(-80);
+    wait(800, msec);
+    left_drive.stop(brake);
+    right_drive.stop(brake); 
+    wait(200, msec);
+
+    // Reset position (Guess first, then use sensors)
+
+    tracking_wheel_piston.set(false);
+    position_tracking.SetPosition(42, 0, inertial_sensor.heading());
+     
+    std::vector<double> positionEstimate = EstimatePositionWithDistance(X_Pos);
+    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    //position_tracking.SetPosition(position_tracking.GlobalXPos, 0, inertial_sensor.heading());
+
+    // Get final blue block
+
+    driveTo(14.0, 24.0, 60, forward);
+
+    // Drive to middle
+
+    pointAt(0, 6, 100, forward);
+    driveFor(16, 100);
+
+    // Score seven in middle
+
+    low_goal_BS.set(true);
+    intake_piston.set(true);
+    intake.spin(reverse, 60, percent);*/

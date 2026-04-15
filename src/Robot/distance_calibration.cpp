@@ -295,6 +295,8 @@ std::vector<double> EstimatePositionWithDistance(Wall closestWall, SensorSide se
     distance_forwards /= 10.0;
     distance_right /= 10.0;
 
+    std::cout << distance_forwards << ", " << distance_right << std::endl;
+
     // Calculate angle offsets
 
     double forwardHeadingInRadians = DegToRad(inertial_sensor.heading());

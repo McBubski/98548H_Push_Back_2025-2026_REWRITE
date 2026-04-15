@@ -11,7 +11,7 @@ void Skills(void);
 Auton skillsAuton = {
     "Skills",
     "Epic Skills Oh Yeah",
-    50.5, 17.75, 0.0,//57.625, 0.0, 90.0,
+    47.0, 13.5, 0.0,//47.0, 13.5
     Skills
 };
 
@@ -57,12 +57,26 @@ int matchload_clear_task(void) {
     return 1;
 }
 
+int first_loader_lineup(void) {
+    bool reachedPoint = false;
+    while (position_tracking.GlobalYPos >= 46.0 && !reachedPoint) {
+        wait(20, msec);
+    }
+    reachedPoint = true;
+    RAT_Interrupt = true;
+    std::cout << position_tracking.GlobalYPos << std::endl;
+    std::cout << "Lined up." << std::endl;
+    return 1;
+}
+
 void Skills(void) {
 
     // Curve to the first matchloader
 
     std::vector<double> positionEstimate = EstimatePositionWithDistance(Y_Pos);
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+
+    std::cout << positionEstimate[0] << ", " << positionEstimate[1] << std::endl;
 
     matchloader.set(true);
     intake.spin(forward, 100, percent);
@@ -88,48 +102,35 @@ void Skills(void) {
     Path first_long_goal_path = PathGenerator::GeneratePath(
     	{{57.5, 52.0},
     	 {50.0, 58.0},
-    	 {38.5, 60.0},
-    	 {-34, 58.0},
-         {-40, 44.0}
+    	 {36.5, 60.0},
+    	 {-39, 59.0},
+         {-41, 41.0}
     	},
     	45.0,
     	25.0,
-    	4.0,
+    	3.0,
     	0.3,
     	2.0
     );
 
-    first_long_goal_path.waypoints[4].onReach = []() {
+    first_long_goal_path.waypoints[10].onReach = []() { //4
         matchloader.set(false);
+    };
+
+    first_long_goal_path.waypoints[12].onReach = []() {
+        //task lineup = task(first_loader_lineup);
     };
     
     wing.set(true);
     FollowPath(first_long_goal_path, reverse, 20.0);
 
-    pointAt(-21, 48.0, 100, reverse);
-    driveTo(-21, 48.0, 60, reverse);
-
-    // Get rid of our current blocks
-
-    hood.set(true);
-    indexer_piston.set(true);
-    intake.spin(forward, 100, percent);
-
-    wait(400, msec);
-
-    // Reset position rq
-    ///positionEstimate = EstimatePositionWithDistance(X_Neg);
-    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
-    // Reverse to fix sticking
-    wait(2000, msec);
-
-    // Drive into farside matchloader
+    std::cout << "First long goal!" << std::endl;
 
     Path second_matchloader_path = PathGenerator::GeneratePath(
-	    {{-36.0, 47.5},
-	     {-62.0, 47.5}
+	    {{-56.0, 49.0},
+	     {-64.0, 52.0}
 	    },
-	    50.0,
+	    40.0,
 	    20.0,
 	    3.0,
 	    0.6,
@@ -137,15 +138,16 @@ void Skills(void) {
     );
 
     matchloader.set(true);
-    indexer_piston.set(false);
-    FollowPath(second_matchloader_path, forward, 18.0);
+    //pointAt(-70.0, 49.0, 100, forward);
+    driveTo(-64, 46.5, 60, forward);
+    //FollowPath(second_matchloader_path, forward, 20.0);
     setDrivetrainSpeed(10);
 
     wait(1750, msec);
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
-	    {{-58.0, 47.5},
-	     {-25.5, 49.0}
+	    {{-58.0, 48.0},
+	     {-25.5, 45.5}
 	    },
 	    50.0,
 	    20.0,
@@ -154,19 +156,21 @@ void Skills(void) {
 	    3.0
     );
 
+    hood.set(true);
     FollowPath(first_long_goal_second_time_path, reverse, 18.0);
     setDrivetrainSpeed(-30);
 
     //hood.set(true);
-    intake.spin(forward, 100, percent);
+    intake.spin(reverse, 100, percent);
     indexer_piston.set(true);
     wait(300, msec);
     setDrivetrainSpeed(0);
+    intake.spin(forward, 100, percent);
     // Reset position rq
     positionEstimate = EstimatePositionWithDistance(X_Neg);
-    position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
+    //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
-    wait(2750, msec);
+    wait(3500, msec);
 
     // Push in deeper
     driveFor(6, 100);
@@ -176,7 +180,7 @@ void Skills(void) {
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-36.0, 46.0},
     	 {-54.0, 30.0},
-    	 {-64.0, 15.25}
+    	 {-65.0, 15.25}
     	},
     	50.0,
     	25.0,
@@ -194,7 +198,7 @@ void Skills(void) {
     tracking_wheel_piston.set(true);
     indexer_piston.set(false);
     wait(200, msec);
-    setDrivetrainSpeed(35);
+    setDrivetrainSpeed(45);
     matchloader.set(true);
 
     int startTime = Brain.Timer.system();
@@ -217,7 +221,7 @@ void Skills(void) {
             std::cout << "Slowing down!" << std::endl;
         } 
         
-        if (forward_distance_sensor.objectDistance(inches) <= 50.0 && Brain.Timer.system() - startTime >= 2000) {
+        if (forward_distance_sensor.objectDistance(inches) <= 48.0 && Brain.Timer.system() - startTime >= 2000) {
             clearing = false;
             std::cout << "Cleared!" << std::endl;
         }
@@ -234,12 +238,12 @@ void Skills(void) {
     positionEstimate = EstimatePositionWithDistance(Y_Neg);
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     wait(50, msec);
-    pointAt(-48.0, -52.5, 100, forward);
+    turnToHeading(135, 100);
 
     Path drive_to_third_matchloader_path = PathGenerator::GeneratePath(
-    	{{-56.0, -24.0},
-    	 {-52, -30.0},
-    	 {-46.0, -48.5} // -51.5
+    	{{-48.0, -22.0},
+    	 {-44.0, -38.0},
+    	 {-40.0, -50.5} // -51.5
     	},
     	45.0,
     	25.0,
@@ -248,16 +252,19 @@ void Skills(void) {
     	2.5
     );
 
+    pointAt(-48.0, -22.0, 100, forward);
     FollowPath(drive_to_third_matchloader_path, forward, 18.0);
 
+    std::cout << position_tracking.GlobalXPos << ", " << position_tracking.GlobalYPos << std::endl;
 
-    //pointAt(-62, -43.0, 100, forward);
+    //turnToHeading(140, 100);
+    pointAt(-60.0, -44.0, 100, forward);
     //driveFor(-4, 100);
     matchloader.set(true);
 
     Path third_matchloader_path = PathGenerator::GeneratePath(
-	    {{-50.0, -48.0},
-	     {-62.0, -48.0}
+	    {{-60.0, -46.0},
+	     {-64.0, -46.0}
 	    },
 	    40.0,
 	    10.0,
@@ -268,18 +275,18 @@ void Skills(void) {
 
     FollowPath(third_matchloader_path, forward, 18.0);
 
-    driveTo(-62.0, -48.0, 80, forward);
+    //driveTo(-62.0, -48.0, 80, forward);
 
     setDrivetrainSpeed(10);
 
     wait(1800, msec);
 
-    Path first_second_long_goal_path = PathGenerator::GeneratePath(
-    	{{-57.5, -48.0},
-    	 {-50.0, -57.0},
-    	 {-38.5, -57.0},
-    	 {24, -57.0},
-         {44, -32.5} // -34.5
+    Path second_long_goal_path = PathGenerator::GeneratePath(
+    	{{-57.0, -48.0},
+    	 {-50.0, -60.0},
+    	 {-38.5, -60.0},
+    	 {24, -58.0},
+         {44, -40.5} // -34.5
     	},
     	45.0,
     	25.0,
@@ -288,24 +295,14 @@ void Skills(void) {
     	2.5
     );
 
-    first_second_long_goal_path.waypoints[4].onReach = []() {
+    second_long_goal_path.waypoints[4].onReach = []() {
         matchloader.set(false);
     };
 
-    first_second_long_goal_path.waypoints[10].onReach = []() {
-        std::cout << "Reversing!" << std::endl;
-        intake.spin(reverse, 100, percent);
-        wait(150, msec);
-        intake.stop();
-    };
-    
     wing.set(true);
-    FollowPath(first_second_long_goal_path, reverse, 20.0);
+    FollowPath(second_long_goal_path, reverse, 20.0);
 
-    // Goal close to you left side
-    driveTo(23, -37.5, 70, reverse); // CHANGED FOR THIRD SKIILLS RUN, STATE 3/7
-
-    driveFor(-2, 100);
+    /*driveFor(-2, 100);
     hood.set(true);
     intake.spin(forward, 100, percent);
     indexer.spin(forward, 100, percent);
@@ -436,7 +433,7 @@ void Skills(void) {
             left_drive.stop(brake);
             right_drive.stop(brake);
         }
-    }
+    }*/
 }
 
 /*    // NEW SKILLS

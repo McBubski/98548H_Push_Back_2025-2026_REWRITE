@@ -22,7 +22,7 @@ int matchloader_hack (void) {
     Controller.rumble("---");
     RAT_Interrupt = true;
     setDrivetrainSpeed(50);
-    wait(800, msec);
+    wait(400, msec);
     std::cout << "Stop!" << std::endl;
 
     return 1;
@@ -84,25 +84,25 @@ void SoloAWPAuton(void) {
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {49.0, 46.0},
-    	 {73.0 /*almost nice*/, 44.5},
+    	 {50.0, 41.0},
+    	 {73.0 /*almost nice*/, 48.5},
     	},
     	55.0,
     	20.0,
     	3.0,
     	0.55,
-    	0.20
+    	0.4
     );
 
     std::cout << "Finished path" << std::endl;
     FollowPath(matchload_path, forward, 12.0);
     setDrivetrainSpeed(70);
-    wait(300, msec);
+    wait(50, msec);
     std::cout << "Finished driving" << std::endl;
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 53.0},
-    	 {29.5, 50.5},
+    	{{56.0, 50.0},
+    	 {29.5, 48.0},
     	},
     	55.0,
     	20.0,
@@ -116,7 +116,7 @@ void SoloAWPAuton(void) {
     intake.spin(forward, 100, percent);
     indexer_piston.set(true);
     setDrivetrainSpeed(-50);
-    wait(300, msec);
+    wait(100, msec);
     setDrivetrainSpeed(0);
 
     // Color Sort!
@@ -152,13 +152,14 @@ void SoloAWPAuton(void) {
     std::cout << "sorted" << std::endl;
 
     indexer_piston.set(true);
+    wing.set(true);
     matchloader.set(false);
 
     Path middle_goal_ball_path = PathGenerator::GeneratePath(
 	    {{34.0, 49.0},
 	     {30.0, 34.0},
-	     {24.0, 30.5},
-	     {24.0, -24.0}
+	     {29.0, 28.5},
+	     {24.0, -28.0}
 	    },
 	    80.0,
 	    25.0,
@@ -176,7 +177,7 @@ void SoloAWPAuton(void) {
         matchloader.set(true);
     };
 
-    FollowPath(middle_goal_ball_path, forward, 20.0);
+    FollowPath(middle_goal_ball_path, forward, 16.0);
 
     //driveTo(-13, -13, 100, reverse);
 
@@ -187,10 +188,13 @@ void SoloAWPAuton(void) {
     //pointAt(0.0, -5.5, 100, reverse);
 
     intake.stop();
-    driveFor(-14.0, 100);
+    //driveFor(-15.0, 100);
+    setDrivetrainSpeed(-30);
     indexer_piston.set(true);
+    wait(750, msec);
     
     intake.spin(forward, 70, percent);
+    setDrivetrainSpeed(0);
     wait(600, msec);
 
     matchloader.set(true);
@@ -221,8 +225,8 @@ void SoloAWPAuton(void) {
     //wait(450, msec);
 
     Path goal_path1 = PathGenerator::GeneratePath(
-    	{{56.0, -48.0},
-    	 {29.5, -48.5},
+    	{{56.0, -47.0},
+    	 {27.0, -46.25},
     	},
     	50.0,
     	10.0,
@@ -239,6 +243,5 @@ void SoloAWPAuton(void) {
     wait(150, msec);
     intake.spin(forward, 100, percent);
 
-    
     wait(1250, msec);
 }

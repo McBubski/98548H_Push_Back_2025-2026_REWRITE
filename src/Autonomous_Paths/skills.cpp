@@ -84,8 +84,8 @@ void Skills(void) {
 
     Path matchload_path = PathGenerator::GeneratePath(
     	{{48.0, 24.0},
-    	 {49.0, 44.0},
-    	 {73.0 /*almost nice*/, 41.0},
+    	 {50.0, 42.0},
+    	 {74.0 /*almost nice*/, 43.0},
     	},
     	50.0,
     	20.0,
@@ -106,11 +106,11 @@ void Skills(void) {
     	 {36.0, 57.0},
     	 {0.0, 57.0},
          {-48.0, 57.0},
-         {-48.0, 40.0},
+         {-48.0, 40.5},
     	},
     	45.0,
     	25.0,
-    	4.0,
+    	3.0,
     	0.5,
     	2.0
     );
@@ -148,8 +148,8 @@ void Skills(void) {
     wait(1750, msec);
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
-	    {{-58.0, 47.5},
-	     {-25.5, 43.5}
+	    {{-58.0, 47.0},
+	     {-27.5, 44.5}
 	    },
 	    50.0,
 	    20.0,
@@ -163,6 +163,7 @@ void Skills(void) {
     setDrivetrainSpeed(-30);
 
     //hood.set(true);
+    matchloader.set(false);
     intake.spin(reverse, 100, percent);
     indexer_piston.set(true);
     wait(300, msec);
@@ -191,7 +192,6 @@ void Skills(void) {
     	3.0
     );
 
-    matchloader.set(false);
     FollowPath(clear_first_park_zone_path, forward, 16.0);
     turnToHeading(183, 100);
     //driveFor(3, 100);
@@ -287,11 +287,11 @@ void Skills(void) {
     	 {-50.0, -60.0},
     	 {-38.5, -60.0},
     	 {46, -58.0},
-         {48, -40.0} // -34.5
+         {48, -42.0} // -34.5
     	},
     	45.0,
     	25.0,
-    	6.0,
+    	4.0,
     	0.35,
     	2.5
     );
@@ -305,12 +305,12 @@ void Skills(void) {
     matchloader.set(true);
     hood.set(true);
 
-    driveTo(64, -43.0, 100, forward);
+    driveTo(64, -44.5, 100, forward);
     wait(1800, msec);
 
     Path second_long_goal_scoring_path = PathGenerator::GeneratePath(
-	    {{58.0, -45.5},
-	     {23.5, -46.5}
+	    {{58.0, -44.5},
+	     {26.5, -45.5}
 	    },
 	    50.0,
 	    20.0,
@@ -338,7 +338,7 @@ void Skills(void) {
     Path park_path = PathGenerator::GeneratePath(
     	{{38.0, -46.0},
     	 {47.0, -24.0},
-    	 {61.5 , -14.5}
+    	 {66.0 , -18.0}
     	},
     	50.0,
     	25.0,
@@ -354,7 +354,8 @@ void Skills(void) {
 
     // Clear zone
     setDrivetrainSpeed(50);
-    intake.spin(reverse, 100, percent);
+    intake.spin(forward, 100, percent);
+    indexer_piston.set(false);
     tracking_wheel_piston.set(true);
     wait(75, msec);
     matchloader.set(true);
@@ -368,7 +369,7 @@ void Skills(void) {
             continue;
         }
 
-        double error = forward_distance_sensor.objectDistance(inches) - 65.0;
+        double error = forward_distance_sensor.objectDistance(inches) - 62.0;
 
         double driveOutput = error * 3;
 

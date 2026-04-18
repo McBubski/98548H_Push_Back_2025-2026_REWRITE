@@ -16,10 +16,19 @@ Auton sevenBallRightAuton = {
     SevenBallRightAuton
 };
 
+int matchloader_hack_seven_ball_right (void) {
+    std::cout << "Start" << std::endl;
+    wait(1800, msec);
+    std::cout << "Stop!" << std::endl;
+    RAT_Interrupt = true;
+
+    return 1;
+}
+
 void SevenBallRightAuton(void) {
     Path three_balls_path = PathGenerator::GeneratePath(
     	{{40.0, 17.50},
-    	 {19.0, 21.0},
+    	 {24.0, 24.0},
     	},
     	50.0,
     	15.0,
@@ -40,8 +49,8 @@ void SevenBallRightAuton(void) {
 
     Path matchloader_path = PathGenerator::GeneratePath(
     	{{34.0, 35.0},
-    	 {43.0, 42.5},
-    	 {67.0, 44.5}
+    	 {43.0, 45.5},
+    	 {67.0, 47.5}
     	},
     	55.0,
     	15.0,
@@ -50,18 +59,16 @@ void SevenBallRightAuton(void) {
     	0.75
     );
 
+    task hacky_sacky = task(matchloader_hack_seven_ball_right);
     FollowPath(matchloader_path, forward, 18);
-
-    setDrivetrainSpeed(5);
-    wait(600, msec);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(X_Pos, Right);
     //std::cout << "Estimate: " << positionEstimate[0] << ", " << positionEstimate[1] << std::endl;
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, 47.5},
-    	 {33.5, 46.5},
+    	{{56.0, 47.0},
+    	 {28.5, 47.0},
     	},
     	50.0,
     	20.0,
@@ -73,47 +80,16 @@ void SevenBallRightAuton(void) {
     FollowPath(goal_path, reverse, 18.0);
 
     setDrivetrainSpeed(-2);
+    indexer_piston.set(true);
     hood.set(true);
     wait(200, msec);
     setDrivetrainSpeed(0);
 
     // Color Sort!
 
-    color_sort_mode allianceColor = colorSortMode;
-    color otherColor;
-
-    if (allianceColor == RED) {
-        otherColor = color::blue;
-    } else {
-        otherColor = color::red;
-    }
-
-    int startScoreTime = Brain.Timer.system();
-    bool scoring = true;
-
-    while (scoring) {
-        if ((Brain.Timer.system() - startScoreTime) > 1500) {
-            scoring = false;
-        }
-        if (otherColor == blue) {
-            if (color_sensor.color() == blue) {
-                scoring = false;
-            }
-        } else if (otherColor == red) {
-            if (color_sensor.color() == red) {
-                scoring = false;
-            }
-        }
-        wait(5, msec);
-    }
-
-    intake.spin(reverse, 100, percent);
-    matchloader.set(false);
-    driveFor(2, 100);
-    hood.set(false);
-    setDrivetrainSpeed(-20);
-    wait(1000, msec);
-
     left_drive.stop(hold);
     right_drive.stop(hold);
+
+    wait(1500, msec);
+    indexer_piston.set(false);
 }

@@ -16,6 +16,15 @@ Auton sevenBallLeftAuton = {
     SevenBallLeftAuton
 };
 
+int matchloader_hack_seven_ball_left (void) {
+    std::cout << "Start" << std::endl;
+    wait(1800, msec);
+    std::cout << "Stop!" << std::endl;
+    RAT_Interrupt = true;
+
+    return 1;
+}
+
 void SevenBallLeftAuton(void) {
     Path three_balls_path = PathGenerator::GeneratePath(
     	{{40.0, -17.50},
@@ -28,7 +37,7 @@ void SevenBallLeftAuton(void) {
     	3.0
     );
 
-    three_balls_path.waypoints[2].onReach = []() {
+    three_balls_path.waypoints[3].onReach = []() {
         matchloader.set(true);
     };
 
@@ -40,28 +49,26 @@ void SevenBallLeftAuton(void) {
 
     Path matchloader_path = PathGenerator::GeneratePath(
     	{{34.0, -35.0},
-    	 {43.0, -44.5},
-    	 {67.0, -47.0}
+    	 {43.0, -45.5},
+    	 {67.0, -48.0}
     	},
-    	50.0,
+    	55.0,
     	15.0,
     	3.0,
     	0.55,
     	0.75
     );
 
+    task hacky_sacky_2 = task(matchloader_hack_seven_ball_left);
     FollowPath(matchloader_path, forward, 18);
-
-    setDrivetrainSpeed(5);
-    wait(600, msec);
 
     //std::vector<double> positionEstimate = EstimatePositionWithDistance(X_Pos, Right);
     //std::cout << "Estimate: " << positionEstimate[0] << ", " << positionEstimate[1] << std::endl;
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
 
     Path goal_path = PathGenerator::GeneratePath(
-    	{{56.0, -47.5},
-    	 {34.0, -48.5},
+    	{{56.0, -48.0},
+    	 {28.5, -49.0},
     	},
     	50.0,
     	20.0,
@@ -73,16 +80,16 @@ void SevenBallLeftAuton(void) {
     FollowPath(goal_path, reverse, 18.0);
 
     setDrivetrainSpeed(-2);
+    indexer_piston.set(true);
     hood.set(true);
     wait(200, msec);
     setDrivetrainSpeed(0);
 
-    wait(1500, msec);
-    driveFor(2, 100);
-    hood.set(false);
-    setDrivetrainSpeed(-20);
-    wait(1000, msec);
+    // Color Sort!
 
     left_drive.stop(hold);
     right_drive.stop(hold);
+
+    wait(1500, msec);
+    indexer_piston.set(false);
 }

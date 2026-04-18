@@ -17,7 +17,7 @@ Auton skillsAuton = {
 
 int matchloader_hack_skills (void) {
     std::cout << "Start" << std::endl;
-    wait(1800, msec);
+    wait(1000, msec);
     std::cout << "Stop!" << std::endl;
     RAT_Interrupt = true;
 
@@ -106,7 +106,7 @@ void Skills(void) {
     	 {36.0, 57.0},
     	 {0.0, 57.0},
          {-48.0, 57.0},
-         {-48.0, 40.5},
+         {-48.0, 42.0},
     	},
     	45.0,
     	25.0,
@@ -141,7 +141,7 @@ void Skills(void) {
 */
     matchloader.set(true);
     //pointAt(-70.0, 49.0, 100, forward);
-    driveTo(-64, 45.0, 60, forward);
+    driveTo(-64, 48.0, 60, forward);
     //FollowPath(second_matchloader_path, forward, 20.0);
     setDrivetrainSpeed(10);
 
@@ -149,7 +149,7 @@ void Skills(void) {
 
     Path first_long_goal_second_time_path = PathGenerator::GeneratePath(
 	    {{-58.0, 47.0},
-	     {-27.5, 44.5}
+	     {-27.5, 47.5}
 	    },
 	    50.0,
 	    20.0,
@@ -164,7 +164,6 @@ void Skills(void) {
 
     //hood.set(true);
     matchloader.set(false);
-    intake.spin(reverse, 100, percent);
     indexer_piston.set(true);
     wait(300, msec);
     setDrivetrainSpeed(0);
@@ -173,7 +172,11 @@ void Skills(void) {
     positionEstimate = EstimatePositionWithDistance(X_Neg);
     //position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
-    wait(3500, msec);
+    wait(1000, msec);
+    intake.spin(reverse, 100, percent);
+    wait(200, msec);
+    intake.spin(forward, 100, percent);
+    wait(3000, msec);
 
     // Push in deeper
     driveFor(6, 100);
@@ -183,7 +186,7 @@ void Skills(void) {
     Path clear_first_park_zone_path = PathGenerator::GeneratePath(
     	{{-36.0, 46.0},
     	 {-54.0, 30.0},
-    	 {-65.0, 14.75}
+    	 {-65.0, 16.5}
     	},
     	50.0,
     	25.0,
@@ -215,7 +218,7 @@ void Skills(void) {
         if (forward_distance_sensor.objectDistance(inches) <= 74.0 && !hasSlowed && Brain.Timer.system() - startTime >= 500) {
             hasSlowed = true;
 
-            intake.spin(reverse, 100, percent);
+    
             matchloader.set(false);
             setDrivetrainSpeed(30);
             wait(150, msec);
@@ -287,7 +290,7 @@ void Skills(void) {
     	 {-50.0, -60.0},
     	 {-38.5, -60.0},
     	 {46, -58.0},
-         {48, -42.0} // -34.5
+         {50, -41.0} // -34.5
     	},
     	45.0,
     	25.0,
@@ -296,7 +299,7 @@ void Skills(void) {
     	2.5
     );
 
-    second_long_goal_path.waypoints[4].onReach = []() {
+    second_long_goal_path.waypoints[12].onReach = []() {
         matchloader.set(false);
     };
 
@@ -305,12 +308,12 @@ void Skills(void) {
     matchloader.set(true);
     hood.set(true);
 
-    driveTo(64, -44.5, 100, forward);
+    driveTo(64, -48.0, 100, forward);
     wait(1800, msec);
 
     Path second_long_goal_scoring_path = PathGenerator::GeneratePath(
-	    {{58.0, -44.5},
-	     {26.5, -45.5}
+	    {{58.0, -47.0},
+	     {26.5, -48.0}
 	    },
 	    50.0,
 	    20.0,
@@ -325,20 +328,25 @@ void Skills(void) {
     indexer_piston.set(true);
     wait(300, msec);
     setDrivetrainSpeed(0);
+    matchloader.set(false);
     intake.spin(forward, 100, percent);
     // Reset position rq
     positionEstimate = EstimatePositionWithDistance(X_Pos);
     position_tracking.SetPosition(positionEstimate[0], positionEstimate[1], inertial_sensor.heading());
     // Reverse to fix sticking
-    wait(3500, msec);
+    wait(1000, msec);
+    intake.spin(reverse, 100, percent);
+    wait(200, msec);
+    intake.spin(forward, 100, percent);
+    wait(3000, msec);
 
     // Push in deeper
     driveFor(6, 100);
 
     Path park_path = PathGenerator::GeneratePath(
-    	{{38.0, -46.0},
-    	 {47.0, -24.0},
-    	 {66.0 , -18.0}
+    	{{38.0, -48.0},
+    	 {50.0, -36.0},
+    	 {64.0 , -20.5}
     	},
     	50.0,
     	25.0,
@@ -347,7 +355,6 @@ void Skills(void) {
     	3.0
     );
 
-    matchloader.set(false);
     FollowPath(park_path, forward, 20.0);
     turnToHeading(3, 100);
     //driveFor(3, 100);
